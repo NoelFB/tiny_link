@@ -1,0 +1,3 @@
+[submodule "libs/blah"]
+	path = libs/blah
+	url = https://github.com/noelfb/blah
