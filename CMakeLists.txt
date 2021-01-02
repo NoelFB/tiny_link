@@ -10,9 +10,9 @@ add_subdirectory(libs/blah)
 
 # add our source
 add_executable(game
-	src/main.cpp
+	
 	src/world.cpp
-)
+ )
 
 # Reference blah
 target_link_libraries(game blah)
