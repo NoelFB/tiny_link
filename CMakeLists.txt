@@ -11,6 +11,7 @@ add_subdirectory(libs/blah)
 # add our source
 add_executable(game
 	src/main.cpp
+	src/world.cpp
 )
 
 # Reference blah
@@ -21,7 +22,5 @@ set(SDL2_DLL "" CACHE FILEPATH "SDL2 DLL Path")
 if (SDL2_ENABLED)
 	add_custom_command(
 		TARGET game POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-				${SDL2_DLL}
-				$<TARGET_FILE_DIR:game>/SDL2.dll)
+		COMMAND ${CMAKE_COMMAND} -E copy ${SDL2_DLL} $<TARGET_FILE_DIR:game>)
 endif()
