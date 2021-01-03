@@ -1,6 +1,8 @@
 #include "player.h"
 #include "mover.h"
 #include "animator.h"
+#include "collider.h"
+#include "../masks.h"
 
 using namespace TL;
 
@@ -11,9 +13,12 @@ namespace
 	constexpr float ground_accel = 500;
 	constexpr float air_accel = 20;
 	constexpr float friction = 800;
+	constexpr float hurt_friction = 200;
 	constexpr float gravity = 450;
 	constexpr float jump_force = -105;
 	constexpr float jump_time = 0.18f;
+	constexpr float hurt_duration = 0.5f;
+	constexpr float invincible_duration = 1.5f;
 }
 
 Player::Player()
@@ -42,6 +47,7 @@ void Player::update()
 
 	auto mover = get<Mover>();
 	auto anim = get<Animator>();
+	auto hitbox = get<Collider>();
 	auto was_on_ground = m_on_ground;
 	m_on_ground = mover->on_ground();
 	int input = input_move.value_i().x;
@@ -57,7 +63,6 @@ void Player::update()
 
 		// set m_facing
 		anim->scale.x = Calc::abs(anim->scale.x) * m_facing;
-
 	}
 
 	// NORMAL STATE
@@ -117,7 +122,11 @@ void Player::update()
 			input_attack.clear_press_buffer();
 
 			m_state = st_attack;
-			m_attack_timer = anim->sprite()->get_animation("attack")->duration();
+			m_attack_timer = 0;
+
+			if (!m_attack_collider)
+				m_attack_collider = entity()->add(Collider::make_rect(RectI()));
+			m_attack_collider->mask = Mask::player_attack;
 
 			if (m_on_ground)
 				mover->speed.x = 0;
@@ -127,13 +136,46 @@ void Player::update()
 	else if (m_state == st_attack)
 	{
 		anim->play("attack");
-		m_attack_timer -= Time::delta;
+		m_attack_timer += Time::delta;
 
-		if (m_attack_timer <= 0)
+		// setup hitbox
+		if (m_attack_timer < 0.2f)
+		{
+			m_attack_collider->set_rect(RectI(-16, -12, 16, 8));
+		}
+		else if (m_attack_timer < 0.5f)
+		{
+			m_attack_collider->set_rect(RectI(8, -8, 16, 8));
+		}
+		else if (m_attack_collider)
+		{
+			m_attack_collider->destroy();
+			m_attack_collider = nullptr;
+		}
+
+		// flip hitbox if you're facing left
+		if (m_facing < 0 && m_attack_collider)
+		{
+			auto rect = m_attack_collider->get_rect();
+			rect.x = -(rect.x + rect.w);
+			m_attack_collider->set_rect(rect);
+		}
+
+		// end the attack
+		if (m_attack_timer >= anim->animation()->duration())
 		{
 			anim->play("idle");
 			m_state = st_normal;
 		}
+	}
+	// HURT STATE
+	else if (m_state == st_hurt)
+	{
+		m_hurt_timer -= Time::delta;
+		if (m_hurt_timer <= 0)
+			m_state = st_normal;
+
+		mover->speed.x = Calc::approach(mover->speed.x, 0, hurt_friction * Time::delta);
 	}
 
 	// Variable Jumping
@@ -145,13 +187,44 @@ void Player::update()
 			m_jump_timer = 0;
 	}
 
+	// Invincible timer
+	if (m_state != st_hurt && m_invincible_timer > 0)
+	{
+		if (Time::on_interval(0.05f))
+			anim->visible = !anim->visible;
+
+		m_invincible_timer -= Time::delta;
+		if (m_invincible_timer <= 0)
+			anim->visible = true;
+	}
+
 	// Gravity
 	if (!m_on_ground)
 	{
 		float grav = gravity;
-		if (Calc::abs(mover->speed.y) < 20 && input_jump.down())
+		if (m_state == st_normal && Calc::abs(mover->speed.y) < 20 && input_jump.down())
 			grav *= 0.4f;
 
 		mover->speed.y += grav * Time::delta;
+	}
+
+	// Hurt Check!
+	if (m_invincible_timer <= 0 && hitbox->check(Mask::enemy))
+	{
+		Time::pause_for(0.1f);
+		anim->play("hurt");
+
+		if (m_attack_collider)
+		{
+			m_attack_collider->destroy();
+			m_attack_collider = nullptr;
+		}
+
+		mover->speed = Vec2(-m_facing * 100, -80);
+
+		health--;
+		m_hurt_timer = hurt_duration;
+		m_invincible_timer = invincible_duration;
+		m_state = st_hurt;
 	}
 }

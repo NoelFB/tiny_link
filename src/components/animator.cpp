@@ -14,6 +14,13 @@ const Sprite* Animator::sprite() const
 	return m_sprite;
 }
 
+const Sprite::Animation* Animator::animation() const
+{
+	if (m_sprite && m_animation_index >= 0 && m_animation_index < m_sprite->animations.size())
+		return &m_sprite->animations[m_animation_index];
+	return nullptr;
+}
+
 void Animator::play(const String& animation, bool restart)
 {
 	BLAH_ASSERT(m_sprite, "No Sprite Assigned!");

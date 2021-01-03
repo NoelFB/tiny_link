@@ -97,6 +97,11 @@ Blah::Vector<Component*>& Entity::components()
 	return m_components;
 }
 
+void Entity::destroy()
+{
+	m_world->destroy_entity(this);
+}
+
 const Blah::Vector<Component*>& Entity::components() const
 {
 	return m_components;

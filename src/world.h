@@ -95,6 +95,8 @@ namespace TL
 
 		Blah::Vector<Component*>& components();
 		const Blah::Vector<Component*>& components() const;
+		
+		void destroy();
 
 	private:
 		Blah::Vector<Component*> m_components;

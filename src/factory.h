@@ -9,5 +9,7 @@ namespace TL
 	namespace Factory
 	{
 		Entity* player(World* world, Point position);
+		Entity* bramble(World* world, Point position);
+		Entity* pop(World* world, Point position);
 	}
 }

@@ -30,7 +30,7 @@ add_executable(game
 	src/masks.h
 	src/factory.h
 	src/factory.cpp
- "src/assets/tileset.h" "src/assets/tileset.cpp" "src/components/tilemap.h" "src/components/tilemap.cpp")
+ "src/assets/tileset.h" "src/assets/tileset.cpp" "src/components/tilemap.h" "src/components/tilemap.cpp" "src/components/hurtable.h" "src/components/hurtable.cpp" "src/components/timer.h" "src/components/timer.cpp")
 
 # Reference blah
 target_link_libraries(game blah)
