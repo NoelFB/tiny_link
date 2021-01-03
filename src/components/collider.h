@@ -29,6 +29,7 @@ namespace TL
 		void set_rect(const RectI& value);
 		bool get_cell(int x, int y) const;
 		void set_cell(int x, int y, bool value);
+		void set_cells(int x, int y, int w, int h, bool value);
 
 		bool check(uint32_t mask, Point offset = Point::zero) const;
 		bool overlaps(const Collider* other, Point offset = Point::zero) const;

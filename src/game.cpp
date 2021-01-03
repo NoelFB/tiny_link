@@ -1,7 +1,9 @@
 #include "game.h"
 #include "content.h"
 #include "masks.h"
+#include "assets/tileset.h"
 #include "components/collider.h"
+#include "components/tilemap.h"
 #include "factory.h"
 
 using namespace TL;
@@ -12,7 +14,7 @@ void Game::startup()
 	Content::load();
 
 	// framebuffer for the game
-	buffer = FrameBuffer::create(320, 180);
+	buffer = FrameBuffer::create(width, height);
 
 	// set batcher to use Nearest Filter
 	batch.default_sampler = TextureSampler(TextureFilter::Nearest);
@@ -27,10 +29,20 @@ void Game::load_map()
 	world.clear();
 
 	// add a test player
-	Factory::player(&world, Point(50, 50));
+	Factory::player(&world, Point(width / 2, height - 32));
 
-	auto floor = world.add_entity(Point(0, 100));
-	auto c2 = floor->add(Collider::make_rect(RectI(0, 0, 320, 16)));
+	// get the castle tileset for now
+	auto castle = Content::find_tileset("castle");
+
+	// make the floor
+	auto floor = world.add_entity();
+	auto tm = floor->add(Tilemap(8, 8, 40, 23));
+	tm->set_cells(0, 20, 40, 3, &castle->tiles[0]);
+	tm->set_cells(0, 18, 10, 2, &castle->tiles[0]);
+
+	auto c2 = floor->add(Collider::make_grid(8, 40, 23));
+	c2->set_cells(0, 20, 40, 3, true);
+	c2->set_cells(0, 18, 10, 2, true);
 	c2->mask = Mask::solid;
 }
 
@@ -67,6 +79,7 @@ void Game::render()
 			}
 		}
 
+		batch.tex(Content::atlas());
 		batch.render(buffer);
 		batch.clear();
 	}

@@ -10,8 +10,9 @@ Entity* Factory::player(World* world, Point position)
 {
 	auto en = world->add_entity(position);
 
-	auto an = en->add(Animator("player"));
-	an->play("idle");
+	auto anim = en->add(Animator("player"));
+	anim->play("idle");
+	anim->depth = -10;
 
 	auto hitbox = en->add(Collider::make_rect(RectI(-4, -8, 8, 8)));
 

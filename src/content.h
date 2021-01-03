@@ -6,6 +6,7 @@ using namespace Blah;
 namespace TL
 {
 	struct Sprite;
+	struct Tileset;
 
 	class Content
 	{
@@ -18,5 +19,6 @@ namespace TL
 		static TextureRef atlas();
 
 		static const Sprite* find_sprite(const char* name);
+		static const Tileset* find_tileset(const char* name);
 	};
 }
