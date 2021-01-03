@@ -73,7 +73,7 @@ namespace TL
 	public:
 		bool active = true;
 		bool visible = true;
-		Blah::Vec2 position;
+		Blah::Point position;
 
 		World* world();
 		const World* world() const;
@@ -115,7 +115,7 @@ namespace TL
 		World& operator=(World&&) = delete;
 		~World();
 
-		Entity* add_entity();
+		Entity* add_entity(Blah::Point position = Blah::Point(0, 0));
 
 		Entity* first_entity();
 
@@ -249,28 +249,28 @@ namespace TL
 	T* World::first()
 	{
 		uint8_t type = Component::Types::id<T>();
-		return m_components_alive[type].first;
+		return (T*)m_components_alive[type].first;
 	}
 
 	template<class T>
 	const T* World::first() const
 	{
 		uint8_t type = Component::Types::id<T>();
-		return m_components_alive[type].first;
+		return (T*)m_components_alive[type].first;
 	}
 
 	template<class T>
 	T* World::last()
 	{
 		uint8_t type = Component::Types::id<T>();
-		return m_components_alive[type].last;
+		return (T*)m_components_alive[type].last;
 	}
 
 	template<class T>
 	const T* World::last() const
 	{
 		uint8_t type = Component::Types::id<T>();
-		return m_components_alive[type].last;
+		return (T*)m_components_alive[type].last;
 	}
 
 	template<class T>

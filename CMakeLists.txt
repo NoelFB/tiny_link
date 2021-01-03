@@ -11,9 +11,23 @@ add_subdirectory(libs/blah)
 # add our source
 add_executable(game
 	src/main.cpp
+	src/world.h
 	src/world.cpp
+	src/game.h
 	src/game.cpp
+	src/content.h
 	src/content.cpp
+	src/assets/sprite.h
+	src/assets/sprite.cpp
+	src/components/animator.h
+	src/components/animator.cpp 
+	src/components/collider.h
+	src/components/collider.cpp
+	src/components/player.h
+	src/components/player.cpp
+	src/components/mover.h
+	src/components/mover.cpp
+	src/masks.h
 )
 
 # Reference blah

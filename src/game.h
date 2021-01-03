@@ -17,5 +17,8 @@ namespace TL
 		void shutdown();
 		void update();
 		void render();
+
+	private:
+		bool m_draw_colliders;
 	};
 }

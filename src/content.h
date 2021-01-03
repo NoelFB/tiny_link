@@ -5,6 +5,8 @@ using namespace Blah;
 
 namespace TL
 {
+	struct Sprite;
+
 	class Content
 	{
 	public:
@@ -13,5 +15,8 @@ namespace TL
 		static FilePath path();
 		static void load();
 		static void unload();
+		static TextureRef atlas();
+
+		static const Sprite* find_sprite(const char* name);
 	};
 }

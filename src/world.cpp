@@ -130,7 +130,7 @@ World::~World()
 	}
 }
 
-Entity* World::add_entity()
+Entity* World::add_entity(Point point)
 {
 	// create entity instance
 	Entity* instance;
@@ -149,6 +149,7 @@ Entity* World::add_entity()
 	m_alive.insert(instance);
 
 	// assign
+	instance->position = point;
 	instance->m_world = this;
 
 	// return new entity!
