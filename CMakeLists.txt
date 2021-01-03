@@ -38,7 +38,9 @@ target_link_libraries(game blah)
 # copy SDL2 to the build directory
 set(SDL2_DLL "" CACHE FILEPATH "SDL2 DLL Path")
 if (SDL2_ENABLED)
-	add_custom_command(
-		TARGET game POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy ${SDL2_DLL} $<TARGET_FILE_DIR:game>)
+	if (EXISTS ${SDL2_DLL})
+		add_custom_command(
+			TARGET game POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${SDL2_DLL} $<TARGET_FILE_DIR:game>)
+	endif()
 endif()
