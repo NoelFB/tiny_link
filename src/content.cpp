@@ -117,29 +117,34 @@ void Content::load()
 	// add sprites
 	for (auto& info : sprite_info)
 	{
-		Sprite* sprite = sprites.expand();
-		sprite->name = info.name;
-		sprite->origin = Vec2::zero;
+		Sprite sprite;
+		sprite.name = info.name;
+		sprite.origin = Vec2::zero;
 
 		if (info.aseprite.slices.size() > 0 && info.aseprite.slices[0].has_pivot)
 		{
-			sprite->origin = Vec2(
+			sprite.origin = Vec2(
 				info.aseprite.slices[0].pivot.x,
 				info.aseprite.slices[0].pivot.y);
 		}
 
 		for (auto& tag : info.aseprite.tags)
 		{
-			Sprite::Animation* anim = sprite->animations.expand();
-			anim->name = tag.name;
+			Sprite::Animation anim;
+			anim.name = tag.name;
 
 			for (int i = tag.from; i <= tag.to; i++)
 			{
-				Sprite::Frame* frame = anim->frames.expand();
-				frame->duration = info.aseprite.frames[i].duration / 1000.0f;
-				frame->image = subtextures[info.pack_index + i];
+				Sprite::Frame frame;
+				frame.duration = info.aseprite.frames[i].duration / 1000.0f;
+				frame.image = subtextures[info.pack_index + i];
+				anim.frames.push_back(frame);
 			}
+
+			sprite.animations.push_back(anim);
 		}
+
+		sprites.push_back(sprite);
 	}
 
 	// add tilesets
