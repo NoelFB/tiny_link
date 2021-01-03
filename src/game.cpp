@@ -19,31 +19,57 @@ void Game::startup()
 	// set batcher to use Nearest Filter
 	batch.default_sampler = TextureSampler(TextureFilter::Nearest);
 
-	m_draw_colliders = true;
+	m_draw_colliders = false;
 
-	load_map();
+	load_room(Point(0, 0));
 }
 
-void Game::load_map()
+void Game::load_room(Point cell)
 {
-	world.clear();
+	const Image* grid = Content::find_room(cell);
+	BLAH_ASSERT(grid, "Room doesn't exist!");
+	room = cell;
 
-	// add a test player
-	Factory::player(&world, Point(width / 2, height - 32));
+	// destroy all the entities
+	world.clear();
 
 	// get the castle tileset for now
 	auto castle = Content::find_tileset("castle");
 
 	// make the floor
 	auto floor = world.add_entity();
-	auto tm = floor->add(Tilemap(8, 8, 40, 23));
-	tm->set_cells(0, 20, 40, 3, &castle->tiles[0]);
-	tm->set_cells(0, 18, 10, 2, &castle->tiles[0]);
+	auto tilemap = floor->add(Tilemap(8, 8, columns, rows));
+	auto solids = floor->add(Collider::make_grid(8, 40, 23));
+	solids->mask = Mask::solid;
 
-	auto c2 = floor->add(Collider::make_grid(8, 40, 23));
-	c2->set_cells(0, 20, 40, 3, true);
-	c2->set_cells(0, 18, 10, 2, true);
-	c2->mask = Mask::solid;
+	// loop over the room grid
+	for (int x = 0; x < columns; x ++)
+		for (int y = 0; y < rows; y++)
+		{
+			Color col = grid->pixels[x + y * columns];
+			uint32_t rgb =
+				((uint32_t)col.r << 16) |
+				((uint32_t)col.g << 8) |
+				((uint32_t)col.b);
+
+			switch (rgb)
+			{
+			// black does nothing
+			case 0x000000:
+				break;
+
+			// solids
+			case 0xffffff:
+				tilemap->set_cell(x, y, &castle->random_tile());
+				solids->set_cell(x, y, true);
+				break;
+
+			// player
+			case 0x6abe30:
+				Factory::player(&world, Point(x * tile_width + tile_width / 2, (y + 1) * tile_height));
+				break;
+			}
+		}
 }
 
 void Game::shutdown()
@@ -56,7 +82,7 @@ void Game::update()
 	if (Input::pressed(Key::F1))
 		m_draw_colliders = !m_draw_colliders;
 	if (Input::pressed(Key::F2))
-		load_map();
+		load_room(room);
 
 	world.update();
 }
@@ -65,7 +91,7 @@ void Game::render()
 {
 	// draw gameplay stuff
 	{
-		buffer->clear(0x4488aa);
+		buffer->clear(0x150e22);
 
 		world.render(batch);
 
@@ -79,7 +105,6 @@ void Game::render()
 			}
 		}
 
-		batch.tex(Content::atlas());
 		batch.render(buffer);
 		batch.clear();
 	}

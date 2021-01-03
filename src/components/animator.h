@@ -16,6 +16,7 @@ namespace TL
 		float m_frame_counter = 0;
 
 	public:
+		Vec2 scale = Vec2::one;
 
 		Animator() = default;
 		Animator(const String& sprite);

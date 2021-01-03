@@ -9,16 +9,19 @@ namespace TL
 	class Game
 	{
 	public:
-		static constexpr int width = 320;
-		static constexpr int height = 180;
+		static constexpr int width = 240;
+		static constexpr int height = 135;
 		static constexpr int tile_width = 8;
 		static constexpr int tile_height = 8;
+		static constexpr int columns = width / tile_width;
+		static constexpr int rows = height / tile_height + 1;
 
 		World world;
 		FrameBufferRef buffer;
 		Batch batch;
+		Point room;
 
-		void load_map();
+		void load_room(Point cell);
 		void startup();
 		void shutdown();
 		void update();

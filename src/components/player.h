@@ -16,6 +16,8 @@ namespace TL
 		void update() override;
 
 	private:
+		int facing = 1;
 		float m_jump_timer = 0;
+		bool m_on_ground;
 	};
 }

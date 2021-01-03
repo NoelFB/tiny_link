@@ -55,7 +55,7 @@ void Animator::render(Batch& batch)
 	if (in_valid_state())
 	{
 		batch.push_matrix(
-			Mat3x2::create_transform(entity()->position, m_sprite->origin, Vec2::one, 0));
+			Mat3x2::create_transform(entity()->position, m_sprite->origin, scale, 0));
 
 		auto& anim = m_sprite->animations[m_animation_index];
 		auto& frame = anim.frames[m_frame_index];

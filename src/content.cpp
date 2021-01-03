@@ -7,11 +7,11 @@ using namespace TL;
 
 namespace
 {
-	FilePath root;
-	Vector<Sprite> sprites;
-	Vector<Tileset> tilesets;
-	Vector<Subtexture> subtextures;
-	TextureRef sprite_atlas;
+	struct RoomInfo
+	{
+		Image image;
+		Point cell;
+	};
 
 	struct SpriteInfo
 	{
@@ -19,6 +19,13 @@ namespace
 		Aseprite aseprite;
 		uint64_t pack_index;
 	};
+
+	FilePath root;
+	Vector<Sprite> sprites;
+	Vector<Tileset> tilesets;
+	Vector<Subtexture> subtextures;
+	Vector<RoomInfo> rooms;
+	TextureRef sprite_atlas;
 }
 
 SpriteFont Content::font;
@@ -164,6 +171,28 @@ void Content::load()
 				i++;
 			}
 	}
+
+	// load the rooms
+	for (auto& it : Directory::enumerate(path() + "/map", false))
+	{
+		if (!it.ends_with(".png"))
+			continue;
+
+		auto name = Path::get_file_name_no_ext(it);
+		auto point = name.split('x');
+		if (point.size() != 2)
+			continue;
+
+		RoomInfo info;
+		info.cell.x = strtol(point[0].cstr(), nullptr, 0);
+		info.cell.y = strtol(point[1].cstr(), nullptr, 0);
+		info.image = Image(it);
+
+		BLAH_ASSERT(info.image.width == Game::columns, "Room is incorrect width!");
+		BLAH_ASSERT(info.image.height == Game::rows, "Room is incorrect height!");
+
+		rooms.push_back(info);
+	}
 }
 
 void Content::unload()
@@ -190,6 +219,15 @@ const Tileset* Content::find_tileset(const char* name)
 	for (auto& it : tilesets)
 		if (it.name == name)
 			return &it;
+
+	return nullptr;
+}
+
+const Image* Content::find_room(const Point& cell)
+{
+	for (auto& it : rooms)
+		if (it.cell == cell)
+			return &it.image;
 
 	return nullptr;
 }
