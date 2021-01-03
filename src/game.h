@@ -13,6 +13,7 @@ namespace TL
 		FrameBufferRef buffer;
 		Batch batch;
 
+		void load_map();
 		void startup();
 		void shutdown();
 		void update();

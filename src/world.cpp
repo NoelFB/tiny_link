@@ -219,6 +219,17 @@ void World::destroy(Component* component)
 	}
 }
 
+void World::clear()
+{
+	Entity* entity = first_entity();
+	while (entity)
+	{
+		auto next = entity->next();
+		destroy_entity(entity);
+		entity = next;
+	}
+}
+
 void World::update()
 {
 	for (int i = 0; i < Component::Types::count(); i++)

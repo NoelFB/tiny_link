@@ -28,6 +28,8 @@ add_executable(game
 	src/components/mover.h
 	src/components/mover.cpp
 	src/masks.h
+	src/factory.h
+	src/factory.cpp
 )
 
 # Reference blah

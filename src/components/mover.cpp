@@ -71,8 +71,20 @@ void Mover::stop()
 	m_remainder.y = 0;
 }
 
+bool Mover::on_ground(int dist) const
+{
+	if (!collider)
+		return false;
+
+	return collider->check(Mask::solid, Point(0, dist));
+}
+
 void Mover::update()
 {
+	// apply gravity
+	if (gravity != 0 && (!collider || !collider->check(Mask::solid, Point(0, 1))))
+		speed.y += gravity * Time::delta;
+
 	// get the amount we should move, including remainder from the previous frame
 	Vec2 total = m_remainder + speed * Time::delta;
 

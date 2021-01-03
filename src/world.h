@@ -143,6 +143,7 @@ namespace TL
 		const T* last() const;
 
 		void destroy(Component* component);
+		void clear();
 
 		void update();
 
@@ -170,14 +171,14 @@ namespace TL
 	T* Component::get()
 	{
 		BLAH_ASSERT(m_entity, "Component must be assigned to an Entity");
-		return entity->get<T>();
+		return m_entity->get<T>();
 	}
 
 	template<class T>
 	const T* Component::get() const
 	{
 		BLAH_ASSERT(m_entity, "Component must be assigned to an Entity");
-		return entity->get<T>();
+		return m_entity->get<T>();
 	}
 
 	template<class T>
