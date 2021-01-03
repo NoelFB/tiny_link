@@ -52,10 +52,12 @@ void Tilemap::set_cells(int x, int y, int w, int h, const Subtexture* tex)
 
 void Tilemap::render(Batch& batch)
 {
+	batch.push_matrix(Mat3x2::create_translation(entity()->position));
 	for (int x = 0; x < m_columns; x ++)
 		for (int y = 0; y < m_rows; y ++)
 			if (m_grid[x + y * m_columns].texture)
 			{
 				batch.tex(m_grid[x + y * m_columns], Vec2(x * m_tile_width, y * m_tile_height));
 			}
+	batch.pop_matrix();
 }

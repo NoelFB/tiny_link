@@ -27,12 +27,18 @@ Player::Player()
 		.press_buffer(0.15f)
 		.add_key(Key::X)
 		.add_button(0, Button::A);
+
+	input_attack = VirtualButton()
+		.press_buffer(0.15f)
+		.add_key(Key::C)
+		.add_button(0, Button::X);
 }
 
 void Player::update()
 {
 	input_move.update();
 	input_jump.update();
+	input_attack.update();
 
 	auto mover = get<Mover>();
 	auto anim = get<Animator>();
@@ -44,37 +50,99 @@ void Player::update()
 	{
 		// land squish
 		if (!was_on_ground && m_on_ground)
-			anim->scale = Vec2(facing * 1.5f, 0.7f);
+			anim->scale = Vec2(m_facing * 1.5f, 0.7f);
 
 		// lerp scale back to one
-		anim->scale = Calc::approach(anim->scale, Vec2(facing, 1.0f), Time::delta * 4);
+		anim->scale = Calc::approach(anim->scale, Vec2(m_facing, 1.0f), Time::delta * 4);
 
-		// set facing
-		anim->scale.x = Calc::abs(anim->scale.x) * facing;
+		// set m_facing
+		anim->scale.x = Calc::abs(anim->scale.x) * m_facing;
+
 	}
 
-	// Horizontal Movement
+	// NORMAL STATE
+	if (m_state == st_normal)
 	{
-		// Acceleration
-		mover->speed.x += input * (m_on_ground ? ground_accel : air_accel) * Time::delta;
-
-		// Maxspeed
-		auto maxspd = (m_on_ground ? max_ground_speed : max_air_speed);
-		if (Calc::abs(mover->speed.x) > maxspd)
+		// Current Animation
+		if (m_on_ground)
 		{
-			mover->speed.x = Calc::approach(
-				mover->speed.x,
-				Calc::sign(mover->speed.x) * maxspd,
-				2000 * Time::delta);
+			if (input != 0)
+				anim->play("run");
+			else
+				anim->play("idle");
+		}
+		else
+		{
+			anim->play("jump");
 		}
 
-		// Friction
-		if (input == 0 && m_on_ground)
-			mover->speed.x = Calc::approach(mover->speed.x, 0, friction * Time::delta);
+		// Horizontal Movement
+		{
+			// Acceleration
+			mover->speed.x += input * (m_on_ground ? ground_accel : air_accel) * Time::delta;
 
-		// Facing Direction
-		if (input != 0 && m_on_ground)
-			facing = input;
+			// Maxspeed
+			auto maxspd = (m_on_ground ? max_ground_speed : max_air_speed);
+			if (Calc::abs(mover->speed.x) > maxspd)
+			{
+				mover->speed.x = Calc::approach(
+					mover->speed.x,
+					Calc::sign(mover->speed.x) * maxspd,
+					2000 * Time::delta);
+			}
+
+			// Friction
+			if (input == 0 && m_on_ground)
+				mover->speed.x = Calc::approach(mover->speed.x, 0, friction * Time::delta);
+
+			// Facing Direction
+			if (input != 0 && m_on_ground)
+				m_facing = input;
+		}
+
+		// Invoke Jumping
+		{
+			if (input_jump.pressed() && mover->on_ground())
+			{
+				input_jump.clear_press_buffer();
+				anim->scale = Vec2(m_facing * 0.65f, 1.4f);
+				mover->speed.x = input * max_air_speed;
+				m_jump_timer = jump_time;
+			}
+		}
+
+		// Begin Attack
+		if (input_attack.pressed())
+		{
+			input_attack.clear_press_buffer();
+
+			m_state = st_attack;
+			m_attack_timer = anim->sprite()->get_animation("attack")->duration();
+
+			if (m_on_ground)
+				mover->speed.x = 0;
+		}
+	}
+	// ATTACK STATE
+	else if (m_state == st_attack)
+	{
+		anim->play("attack");
+		m_attack_timer -= Time::delta;
+
+		if (m_attack_timer <= 0)
+		{
+			anim->play("idle");
+			m_state = st_normal;
+		}
+	}
+
+	// Variable Jumping
+	if (m_jump_timer > 0)
+	{
+		mover->speed.y = -100;
+		m_jump_timer -= Time::delta;
+		if (!input_jump.down())
+			m_jump_timer = 0;
 	}
 
 	// Gravity
@@ -85,23 +153,5 @@ void Player::update()
 			grav *= 0.4f;
 
 		mover->speed.y += grav * Time::delta;
-	}
-
-	// Jumping
-	{
-		if (input_jump.pressed() && mover->on_ground())
-		{
-			anim->scale = Vec2(facing * 0.65f, 1.4f);
-			mover->speed.x = input * max_air_speed;
-			m_jump_timer = jump_time;
-		}
-
-		if (m_jump_timer > 0)
-		{
-			mover->speed.y = -100;
-			m_jump_timer -= Time::delta;
-			if (!input_jump.down())
-				m_jump_timer = 0;
-		}
 	}
 }
