@@ -2,6 +2,7 @@
 #include "game.h"
 #include "assets/sprite.h"
 #include "assets/tileset.h"
+#include <stdlib.h>
 
 using namespace TL;
 
