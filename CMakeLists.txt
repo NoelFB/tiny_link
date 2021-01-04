@@ -39,7 +39,7 @@ add_executable(game
 	src/components/timer.h
 	src/components/timer.cpp
 	src/components/enemy.h
-)
+ "src/components/ghost_frog.h" "src/components/ghost_frog.cpp" "src/components/orb.h" "src/components/orb.cpp")
 
 # Reference blah
 target_link_libraries(game blah)

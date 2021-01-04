@@ -245,6 +245,7 @@ namespace TL
 		entity->m_components.push_back(instance);
 		
 		// and we're done!
+		instance->awake();
 		return instance;
 	}
 

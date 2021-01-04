@@ -31,6 +31,8 @@ namespace TL
 		void set_cell(int x, int y, bool value);
 		void set_cells(int x, int y, int w, int h, bool value);
 
+		Collider* first(uint32_t mask, Point offset = Point::zero);
+		const Collider* first(uint32_t mask, Point offset = Point::zero) const;
 		bool check(uint32_t mask, Point offset = Point::zero) const;
 		bool overlaps(const Collider* other, Point offset = Point::zero) const;
 

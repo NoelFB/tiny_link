@@ -2,6 +2,7 @@
 #include "mover.h"
 #include "animator.h"
 #include "collider.h"
+#include "orb.h"
 #include "../masks.h"
 
 using namespace TL;
@@ -220,22 +221,31 @@ void Player::update()
 	}
 
 	// Hurt Check!
-	if (m_invincible_timer <= 0 && hitbox->check(Mask::enemy))
+	if (m_invincible_timer <= 0)
 	{
-		Time::pause_for(0.1f);
-		anim->play("hurt");
-
-		if (m_attack_collider)
+		auto hit = hitbox->first(Mask::enemy);
+		if (hit)
 		{
-			m_attack_collider->destroy();
-			m_attack_collider = nullptr;
+			Time::pause_for(0.1f);
+			anim->play("hurt");
+
+			if (m_attack_collider)
+			{
+				m_attack_collider->destroy();
+				m_attack_collider = nullptr;
+			}
+
+			mover->speed = Vec2(-m_facing * 100, -80);
+
+			health--;
+			m_hurt_timer = hurt_duration;
+			m_invincible_timer = invincible_duration;
+			m_state = st_hurt;
+
+			// hack:
+			// destroy orb
+			if (hit->get<Orb>())
+				hit->entity()->destroy();
 		}
-
-		mover->speed = Vec2(-m_facing * 100, -80);
-
-		health--;
-		m_hurt_timer = hurt_duration;
-		m_invincible_timer = invincible_duration;
-		m_state = st_hurt;
 	}
 }

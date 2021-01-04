@@ -7,6 +7,8 @@
 #include "components/hurtable.h"
 #include "components/timer.h"
 #include "components/enemy.h"
+#include "components/ghost_frog.h"
+#include "components/orb.h"
 
 using namespace TL;
 
@@ -19,6 +21,7 @@ Entity* Factory::player(World* world, Point position)
 	anim->depth = -10;
 
 	auto hitbox = en->add(Collider::make_rect(RectI(-4, -12, 8, 12)));
+	hitbox->mask = Mask::player;
 
 	auto mover = en->add(Mover());
 	mover->collider = hitbox;
@@ -334,3 +337,55 @@ Entity* Factory::blob(World* world, Point position)
 	return en;
 }
 
+Entity* Factory::ghost_frog(World* world, Point position)
+{
+	auto en = world->add_entity(position);
+	en->add(GhostFrog());
+	en->add(Enemy());
+
+	auto anim = en->add(Animator("ghostfrog"));
+	anim->play("sword");
+	anim->depth = -5;
+
+	auto hitbox = en->add(Collider::make_rect(RectI(-4, -12, 8, 12)));
+	hitbox->mask = Mask::enemy;
+
+	auto mover = en->add(Mover());
+	mover->collider = hitbox;
+	mover->gravity = 0;
+	mover->friction = 100;
+	mover->on_hit_x = [](Mover* self) { self->get<GhostFrog>()->on_hit_x(self); };
+	mover->on_hit_y = [](Mover* self) { self->get<GhostFrog>()->on_hit_y(self); };
+
+	auto hurtable = en->add(Hurtable());
+	hurtable->hurt_by = Mask::player_attack;
+	hurtable->collider = hitbox;
+	hurtable->on_hurt = [](Hurtable* self) { self->get<GhostFrog>()->on_hurt(self); };
+
+	return en;
+}
+
+Entity* Factory::orb(World* world, Point position)
+{
+	auto en = world->add_entity(position);
+	en->add(Orb());
+
+	auto anim = en->add(Animator("bullet"));
+	anim->play("idle");
+	anim->depth = -5;
+
+	auto hitbox = en->add(Collider::make_rect(RectI(-4, -4, 8, 8)));
+	hitbox->mask = Mask::enemy;
+
+	auto mover = en->add(Mover());
+	mover->collider = hitbox;
+	mover->on_hit_x = [](Mover* self) { Factory::pop(self->world(), self->entity()->position); self->entity()->destroy(); };
+	mover->on_hit_y = [](Mover* self) { Factory::pop(self->world(), self->entity()->position); self->entity()->destroy(); };
+
+	auto hurtable = en->add(Hurtable());
+	hurtable->hurt_by = Mask::player_attack;
+	hurtable->collider = en->add(Collider::make_rect(RectI(-8, -8, 16, 16)));
+	hurtable->on_hurt = [](Hurtable* self) { self->get<Orb>()->on_hit(); };
+
+	return en;
+}

@@ -29,7 +29,7 @@ void Game::startup()
 	m_draw_colliders = false;
 
 	// load first room
-	load_room(Point(11, 0));
+	load_room(Point(12, 0));
 	camera = Vec2(room.x * width, room.y * height);
 }
 
@@ -132,12 +132,16 @@ void Game::load_room(Point cell, bool is_reload)
 
 			// closing door
 			case 0x847e87:
-				Factory::door(&world, world_position, true);
+				Factory::door(&world, world_position, !is_reload);
 				break;
 
 			// blob
 			case 0x3f3f74:
 				Factory::blob(&world, world_position);
+				break;
+
+			case 0x76428a:
+				Factory::ghost_frog(&world, world_position + Point(-4, 0));
 				break;
 			}
 		}

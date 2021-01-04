@@ -17,6 +17,7 @@ namespace TL
 
 	public:
 		Vec2 scale = Vec2::one;
+		Point offset = Point::zero;
 
 		Animator() = default;
 		Animator(const String& sprite);

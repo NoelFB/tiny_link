@@ -16,5 +16,7 @@ namespace TL
 		Entity* mosquito(World* world, Point position);
 		Entity* door(World* world, Point position, bool wait_for_player = false);
 		Entity* blob(World* world, Point position);
+		Entity* ghost_frog(World* world, Point position);
+		Entity* orb(World* world, Point position);
 	}
 }

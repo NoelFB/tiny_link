@@ -72,6 +72,11 @@ void Collider::set_cells(int x, int y, int w, int h, bool value)
 
 bool Collider::check(uint32_t mask, Point offset) const
 {
+	return first(mask, offset) != nullptr;
+}
+
+Collider* Collider::first(uint32_t mask, Point offset)
+{
 	if (world())
 	{
 		auto other = world()->first<Collider>();
@@ -80,13 +85,32 @@ bool Collider::check(uint32_t mask, Point offset) const
 			if (other != this &&
 				(other->mask & mask) == mask &&
 				overlaps(other, offset))
-				return true;
+				return other;
 
 			other = (Collider*)other->next();
 		}
 	}
 
-	return false;
+	return nullptr;
+}
+
+const Collider* Collider::first(uint32_t mask, Point offset) const
+{
+	if (world())
+	{
+		auto other = world()->first<Collider>();
+		while (other)
+		{
+			if (other != this &&
+				(other->mask & mask) == mask &&
+				overlaps(other, offset))
+				return other;
+
+			other = (Collider*)other->next();
+		}
+	}
+
+	return nullptr;
 }
 
 bool Collider::overlaps(const Collider* other, Point offset) const
