@@ -25,6 +25,7 @@ namespace TL
 		Batch batch;
 		Point room;
 		Vec2 camera;
+		bool fullscreen = false;
 
 		void load_room(Point cell, bool is_reload = false);
 		void startup();

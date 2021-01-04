@@ -33,6 +33,7 @@ void Game::startup()
 	// load first room
 	load_room(Point(0, 0));
 	camera = Vec2(room.x * width, room.y * height);
+	fullscreen = false;
 }
 
 void Game::load_room(Point cell, bool is_reload)
@@ -168,6 +169,18 @@ void Game::update()
 		world.clear();
 		load_room(room);
 	}
+
+	// Reload First Room
+	if (Input::pressed(Key::F9))
+	{
+		m_transition = false;
+		world.clear();
+		load_room(Point(0, 0));
+	}
+
+	// Toggle Fullscreen
+	if (Input::pressed(Key::F4))
+		App::fullscreen(fullscreen = !fullscreen);
 
 	// Normal Update
 	if (!m_transition)
