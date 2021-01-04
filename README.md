@@ -1,4 +1,4 @@
-a small game made in 48 hours on live stream
+a small game made entirely on live stream over about 15 hours.
 
 ### links
  - [windows build](https://github.com/NoelFB/tiny_link/releases/tag/v1.0.0)
@@ -13,7 +13,7 @@ a small game made in 48 hours on live stream
 ### box art
 ![box art](https://github.com/noelfb/tiny_link/raw/main/boxart.jpg "Box art by Grayson")
 
-*box art by [Grayson](https://twitter.com/soft_rumpus/status/1345934041527144459/photo/1)*
+*Box Art by [Grayson](https://twitter.com/soft_rumpus/status/1345934041527144459/photo/1)*
 
 *Mosquito enemy sprite by [Randy](https://twitter.com/RandyPGaul))*
 
