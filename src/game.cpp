@@ -29,7 +29,7 @@ void Game::startup()
 	m_draw_colliders = false;
 
 	// load first room
-	load_room(Point(10, 0));
+	load_room(Point(11, 0));
 	camera = Vec2(room.x * width, room.y * height);
 }
 
@@ -47,6 +47,7 @@ void Game::load_room(Point cell, bool is_reload)
 	auto grass = Content::find_tileset("grass");
 	auto plants = Content::find_tileset("plants");
 	auto backs = Content::find_tileset("back");
+	auto jumpthrus = Content::find_tileset("jumpthru");
 
 	// make the floor
 	auto floor = world.add_entity(offset);
@@ -93,6 +94,16 @@ void Game::load_room(Point cell, bool is_reload)
 				tilemap->set_cell(x, y, &backs->random_tile());
 				break;
 
+			// jumpthru tiles
+			case 0xdf7126:
+			{
+				tilemap->set_cell(x, y, &jumpthrus->random_tile());
+				auto jumpthru_en = world.add_entity(offset + Point(x * tile_width, y * tile_height));
+				auto jumpthru_col = jumpthru_en->add(Collider::make_rect(RectI(0, 0, 8, 4)));
+				jumpthru_col->mask = Mask::jumpthru;
+				break;
+			}
+
 			// player (only if it doesn't already exist)
 			case 0x6abe30:
 				if (!world.first<Player>())
@@ -117,6 +128,11 @@ void Game::load_room(Point cell, bool is_reload)
 			// door
 			case 0x9badb7:
 				Factory::door(&world, world_position);
+				break;
+
+			// closing door
+			case 0x847e87:
+				Factory::door(&world, world_position, true);
 				break;
 
 			// blob
@@ -164,7 +180,7 @@ void Game::update()
 				if (pos.y < 0) next_room.y--;
 
 				// see if room exists
-				if (player->health > 0 && Content::find_room(next_room))
+				if (player->health > 0 && Content::find_room(next_room) && next_room.x >= room.x)
 				{
 					Time::pause_for(0.1f);
 
@@ -238,7 +254,7 @@ void Game::update()
 			{
 				auto player = world.first<Player>();
 				if (player)
-					player->get<Mover>()->speed = Vec2(100, -200);
+					player->get<Mover>()->speed = Vec2(0, -150);
 			}
 
 			// delete old objects (except player!)
@@ -275,6 +291,27 @@ void Game::render()
 				collider->render(batch);
 				collider = (Collider*)collider->next();
 			}
+		}
+
+		// hacky start / end screen text
+		if (room == Point(0, 0) || m_last_room == Point(0, 0))
+		{
+			auto w = Content::font.width_of(title);
+			auto pos = Point((width - w) / 2, 20);
+			batch.str(Content::font, title, pos + Point(0, 1), Color::black);
+			batch.str(Content::font, title, pos, Color::white);
+
+			w = Content::font.width_of(controls);
+			pos.x = (width - w) / 2;
+			pos.y += 20;
+			batch.str(Content::font, controls, pos, Color::white * 0.25f);
+		}
+		else if (room == Point(13, 0))
+		{
+			auto w = Content::font.width_of(ending);
+			auto pos = Point(room.x * width + width / 2, room.y * height + 20);
+			batch.str(Content::font, ending, pos + Point(0, 1), TextAlign::Top, 8, Color::black);
+			batch.str(Content::font, ending, pos, TextAlign::Top, 8, Color::white);
 		}
 
 		// end camera offset

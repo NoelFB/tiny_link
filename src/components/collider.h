@@ -17,7 +17,7 @@ namespace TL
 			Grid
 		};
 
-		uint32_t mask;
+		uint32_t mask = 0;
 
 		Collider();
 

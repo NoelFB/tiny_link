@@ -34,6 +34,6 @@ namespace TL
 		float m_invincible_timer = 0;
 		float m_start_timer = 1;
 		Collider* m_attack_collider = nullptr;
-		bool m_on_ground;
+		bool m_on_ground = false;
 	};
 }

@@ -16,6 +16,10 @@ namespace TL
 		static constexpr int columns = width / tile_width;
 		static constexpr int rows = height / tile_height + 1;
 
+		static inline const char* title = "SWORD II: ADVENTURE OF FROG";
+		static inline const char* controls = "arrow keys + X / C\nstick + A / X";
+		static inline const char* ending = "YOU SAVED POND\nAND YOU ARE\nA REAL HERO";
+
 		World world;
 		FrameBufferRef buffer;
 		Batch batch;

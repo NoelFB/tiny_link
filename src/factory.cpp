@@ -213,26 +213,51 @@ Entity* Factory::mosquito(World* world, Point position)
 	return en;
 }
 
-Entity* Factory::door(World* world, Point position)
+
+namespace
+{
+	void make_door_contents(Entity* en)
+	{
+		auto anim = en->add(Animator("door"));
+		anim->play("idle");
+		anim->depth = -1;
+
+		auto hitbox = en->add(Collider::make_rect(RectI(-6, -16, 12, 16)));
+		hitbox->mask = Mask::solid;
+	}
+}
+
+Entity* Factory::door(World* world, Point position, bool wait_for_player)
 {
 	auto en = world->add_entity(position);
 
-	auto anim = en->add(Animator("door"));
-	anim->play("idle");
-	anim->depth = -1;
-
-	auto hitbox = en->add(Collider::make_rect(RectI(-6, -16, 12, 16)));
-	hitbox->mask = Mask::solid;
+	if (!wait_for_player)
+		make_door_contents(en);
 
 	// check if all enemies are dead
-	en->add(Timer(0.25f, [](Timer* self)
+	en->add(Timer(0.25f, [waiting = wait_for_player](Timer* self) mutable
 	{
 		self->start(0.25f);
+
+		if (waiting)
+		{
+			auto player = self->world()->first<Player>();
+			if (player->entity()->position.x > self->entity()->position.x + 12)
+			{
+				make_door_contents(self->entity());
+				Factory::pop(self->world(), self->entity()->position + Point(0, -8));
+				waiting = false;
+			}
+			else
+				return;
+		}
+
 		if (!self->world()->first<Enemy>())
 		{
 			Factory::pop(self->world(), self->entity()->position + Point(0, -8));
 			self->entity()->destroy();
 		}
+
 	}));
 
 	return en;
