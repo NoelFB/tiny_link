@@ -11,5 +11,8 @@ namespace TL
 		Entity* player(World* world, Point position);
 		Entity* bramble(World* world, Point position);
 		Entity* pop(World* world, Point position);
+		Entity* spitter(World* world, Point position);
+		Entity* bullet(World* world, Point position, int direction);
+		Entity* mosquito(World* world, Point position);
 	}
 }

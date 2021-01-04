@@ -24,12 +24,11 @@ void Game::startup()
 
 	// set batcher to use Nearest Filter
 	batch.default_sampler = TextureSampler(TextureFilter::Nearest);
-
 	m_draw_colliders = false;
 
-	// camera setup
-	camera = Vec2::zero;
+	// load first room
 	load_room(Point(0, 0));
+	camera = Vec2(room.x * width, room.y * height);
 }
 
 void Game::load_room(Point cell)
@@ -45,6 +44,7 @@ void Game::load_room(Point cell)
 	auto castle = Content::find_tileset("castle");
 	auto grass = Content::find_tileset("grass");
 	auto plants = Content::find_tileset("plants");
+	auto backs = Content::find_tileset("back");
 
 	// make the floor
 	auto floor = world.add_entity(offset);
@@ -56,7 +56,7 @@ void Game::load_room(Point cell)
 	for (int x = 0; x < columns; x ++)
 		for (int y = 0; y < rows; y++)
 		{
-			Point world_position = offset + Point(x * tile_width, y * tile_height);
+			Point world_position = offset + Point(x * tile_width, y * tile_height) + Point(tile_width / 2, tile_height);
 			Color col = grid->pixels[x + y * columns];
 			uint32_t rgb =
 				((uint32_t)col.r << 16) |
@@ -86,15 +86,30 @@ void Game::load_room(Point cell)
 				tilemap->set_cell(x, y, &plants->random_tile());
 				break;
 
+			// back tiles
+			case 0x45283c:
+				tilemap->set_cell(x, y, &backs->random_tile());
+				break;
+
 			// player (only if it doesn't already exist)
 			case 0x6abe30:
 				if (!world.first<Player>())
-					Factory::player(&world, world_position + Point(tile_width / 2, tile_height));
+					Factory::player(&world, world_position);
 				break;
 
 			// brambles
 			case 0xd77bba:
-				Factory::bramble(&world, world_position + Point(tile_width / 2, tile_height));
+				Factory::bramble(&world, world_position);
+				break;
+
+			// spitter plant
+			case 0xac3232:
+				Factory::spitter(&world, world_position);
+				break;
+
+			// mosquito
+			case 0xfbf236:
+				Factory::mosquito(&world, world_position + Point(0, -8));
 				break;
 			}
 		}
@@ -164,7 +179,14 @@ void Game::update()
 				{
 					player->entity()->position = Point(
 						Calc::clamp_int(pos.x, bounds.x, bounds.x + bounds.w),
-						Calc::clamp_int(pos.y, bounds.y, bounds.y + bounds.h));
+						Calc::clamp_int(pos.y, bounds.y, bounds.y + bounds.h + 100));
+
+					// reload if they fell out the bottom
+					if (player->entity()->position.y > bounds.y + bounds.h + 64)
+					{
+						world.clear();
+						load_room(room);
+					}
 				}
 			}
 		}

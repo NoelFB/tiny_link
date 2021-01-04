@@ -10,13 +10,11 @@ namespace TL
 {
 	class Hurtable : public Component
 	{
-	private:
-		float m_cooldown_timer = 0;
-
 	public:
+		float stun_timer = 0;
+		float flicker_timer = 0;
 		Collider* collider = nullptr;
 		uint32_t hurt_by = 0;
-		float cooldown = 1.0f;
 		std::function<void(Hurtable* self)> on_hurt;
 
 		void update() override;
