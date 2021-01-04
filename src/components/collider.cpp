@@ -23,9 +23,7 @@ Collider Collider::make_grid(int tile_size, int columns, int rows)
 	collider.m_grid.tile_size = tile_size;
 	collider.m_grid.columns = columns;
 	collider.m_grid.rows = rows;
-	collider.m_grid.cells = std::shared_ptr<bool[]>(new bool[columns * rows]);
-
-	memset(collider.m_grid.cells.get(), 0, sizeof(bool) * columns * rows);
+	collider.m_grid.cells.resize(columns * rows);
 
 	return collider;
 }

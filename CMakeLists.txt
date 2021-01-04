@@ -44,6 +44,11 @@ add_executable(game
 # Reference blah
 target_link_libraries(game blah)
 
+if( ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+    set_target_properties(game PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 --preload-file ${CMAKE_SOURCE_DIR}/content@/content")
+	set(CMAKE_EXECUTABLE_SUFFIX ".html")
+endif()
+
 # copy SDL2 to the build directory
 set(SDL2_DLL "" CACHE FILEPATH "SDL2 DLL Path")
 if (SDL2_ENABLED)
