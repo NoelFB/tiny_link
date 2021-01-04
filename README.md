@@ -14,5 +14,6 @@ a small game made in 48 hours on live stream
 ![box art](https://github.com/noelfb/tiny_link/raw/main/boxart.jpg "Box art by Grayson")
 
 *box art by [Grayson](https://twitter.com/soft_rumpus/status/1345934041527144459/photo/1)*
+
 *Mosquito enemy sprite by [Randy](https://twitter.com/RandyPGaul))*
 
