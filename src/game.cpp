@@ -5,6 +5,8 @@
 #include "components/collider.h"
 #include "components/tilemap.h"
 #include "components/player.h"
+#include "components/mover.h"
+#include "assets/sprite.h"
 #include "factory.h"
 
 using namespace TL;
@@ -27,11 +29,11 @@ void Game::startup()
 	m_draw_colliders = false;
 
 	// load first room
-	load_room(Point(0, 0));
+	load_room(Point(10, 0));
 	camera = Vec2(room.x * width, room.y * height);
 }
 
-void Game::load_room(Point cell)
+void Game::load_room(Point cell, bool is_reload)
 {
 	const Image* grid = Content::find_room(cell);
 	BLAH_ASSERT(grid, "Room doesn't exist!");
@@ -94,7 +96,7 @@ void Game::load_room(Point cell)
 			// player (only if it doesn't already exist)
 			case 0x6abe30:
 				if (!world.first<Player>())
-					Factory::player(&world, world_position);
+					Factory::player(&world, world_position + (is_reload ? Point(0, -16) : Point::zero));
 				break;
 
 			// brambles
@@ -110,6 +112,16 @@ void Game::load_room(Point cell)
 			// mosquito
 			case 0xfbf236:
 				Factory::mosquito(&world, world_position + Point(0, -8));
+				break;
+
+			// door
+			case 0x9badb7:
+				Factory::door(&world, world_position);
+				break;
+
+			// blob
+			case 0x3f3f74:
+				Factory::blob(&world, world_position);
 				break;
 			}
 		}
@@ -152,7 +164,7 @@ void Game::update()
 				if (pos.y < 0) next_room.y--;
 
 				// see if room exists
-				if (Content::find_room(next_room))
+				if (player->health > 0 && Content::find_room(next_room))
 				{
 					Time::pause_for(0.1f);
 
@@ -185,8 +197,22 @@ void Game::update()
 					if (player->entity()->position.y > bounds.y + bounds.h + 64)
 					{
 						world.clear();
-						load_room(room);
+						load_room(room, true);
 					}
+				}
+			}
+
+			// death ... delete everything except the player
+			// then when they fall out of the screen, we reset
+			if (player->health <= 0)
+			{
+				Entity* e = world.first_entity();
+				while (e)
+				{
+					auto next = e->next();
+					if (!e->get<Player>())
+						world.destroy_entity(e);
+					e = next;
 				}
 			}
 		}
@@ -207,6 +233,14 @@ void Game::update()
 		// Finish Transition
 		if (m_next_ease >= 1.0f)
 		{
+			// boost player on vertical up rooms
+			if (m_next_room.y < m_last_room.y)
+			{
+				auto player = world.first<Player>();
+				if (player)
+					player->get<Mover>()->speed = Vec2(100, -200);
+			}
+
 			// delete old objects (except player!)
 			for (auto& it : m_last_entities)
 			{
@@ -226,9 +260,13 @@ void Game::render()
 	{
 		buffer->clear(0x150e22);
 
+		// push camera offset
 		batch.push_matrix(Mat3x2::create_translation(-camera));
+
+		// draw gameplay objects
 		world.render(batch);
 
+		// draw debug colliders
 		if (m_draw_colliders)
 		{
 			auto collider = world.first<Collider>();
@@ -239,7 +277,31 @@ void Game::render()
 			}
 		}
 
+		// end camera offset
 		batch.pop_matrix();
+
+		// draw the health
+		auto player = world.first<Player>();
+		if (player)
+		{
+			auto hearts = Content::find_sprite("heart");
+			auto full = hearts->get_animation("full");
+			auto empty = hearts->get_animation("empty");
+
+			Point pos = Point(0, height - 16);
+			batch.rect(Rect(pos.x, pos.y + 7, 40, 4), Color::black);
+
+			for (int i = 0; i < Player::max_health; i++)
+			{
+				if (player->health >= i + 1)
+					batch.tex(full->frames[0].image, pos);
+				else
+					batch.tex(empty->frames[0].image, pos);
+				pos.x += 12;
+			}
+		}
+
+		// draw to the gameplay buffer
 		batch.render(buffer);
 		batch.clear();
 	}

@@ -68,6 +68,9 @@ void Player::update()
 	// START
 	if (m_state == st_start)
 	{
+		while (hitbox->check(Mask::solid))
+			entity()->position.y++;
+
 		anim->play("sword");
 		m_start_timer -= Time::delta;
 		if (m_start_timer <= 0)

@@ -6,6 +6,7 @@
 #include "components/player.h"
 #include "components/hurtable.h"
 #include "components/timer.h"
+#include "components/enemy.h"
 
 using namespace TL;
 
@@ -17,7 +18,7 @@ Entity* Factory::player(World* world, Point position)
 	anim->play("idle");
 	anim->depth = -10;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-4, -8, 8, 8)));
+	auto hitbox = en->add(Collider::make_rect(RectI(-4, -12, 8, 12)));
 
 	auto mover = en->add(Mover());
 	mover->collider = hitbox;
@@ -42,7 +43,6 @@ Entity* Factory::bramble(World* world, Point position)
 	hurtable->collider = hitbox;
 	hurtable->on_hurt = [](Hurtable* self)
 	{
-		Time::pause_for(0.1f);
 		pop(self->world(), self->entity()->position + Point(0, -4));
 		self->entity()->destroy();
 	};
@@ -69,6 +69,7 @@ Entity* Factory::pop(World* world, Point position)
 Entity* Factory::spitter(World* world, Point position)
 {
 	auto en = world->add_entity(position);
+	en->add(Enemy());
 
 	auto anim = en->add(Animator("spitter"));
 	anim->play("idle");
@@ -193,6 +194,7 @@ Entity* Factory::mosquito(World* world, Point position)
 {
 	auto en = world->add_entity(position);
 	auto mosquito = en->add(MosquitoBehavior());
+	en->add(Enemy());
 
 	auto anim = en->add(Animator("mosquito"));
 	anim->play("fly");
@@ -207,6 +209,102 @@ Entity* Factory::mosquito(World* world, Point position)
 	hurtable->hurt_by = Mask::player_attack;
 	hurtable->collider = hitbox;
 	hurtable->on_hurt = [](Hurtable* self) { self->get<MosquitoBehavior>()->hurt(); };
+
+	return en;
+}
+
+Entity* Factory::door(World* world, Point position)
+{
+	auto en = world->add_entity(position);
+
+	auto anim = en->add(Animator("door"));
+	anim->play("idle");
+	anim->depth = -1;
+
+	auto hitbox = en->add(Collider::make_rect(RectI(-6, -16, 12, 16)));
+	hitbox->mask = Mask::solid;
+
+	// check if all enemies are dead
+	en->add(Timer(0.25f, [](Timer* self)
+	{
+		self->start(0.25f);
+		if (!self->world()->first<Enemy>())
+		{
+			Factory::pop(self->world(), self->entity()->position + Point(0, -8));
+			self->entity()->destroy();
+		}
+	}));
+
+	return en;
+}
+
+Entity* Factory::blob(World* world, Point position)
+{
+	auto en = world->add_entity(position);
+	en->add(Enemy());
+
+	auto anim = en->add(Animator("blob"));
+	anim->play("idle");
+	anim->depth = -5;
+
+	auto hitbox = en->add(Collider::make_rect(RectI(-4, -8, 8, 8)));
+	hitbox->mask = Mask::enemy;
+
+	auto mover = en->add(Mover());
+	mover->collider = hitbox;
+	mover->gravity = 300;
+	mover->friction = 400;
+	mover->on_hit_y = [](Mover* self)
+	{
+		self->get<Animator>()->play("idle");
+		self->stop_y();
+	};
+
+	en->add(Timer(2.0f, [](Timer* self)
+	{
+		auto mover = self->get<Mover>();
+		if (!mover->on_ground())
+		{
+			self->start(0.05f);
+		}
+		else
+		{
+			self->get<Animator>()->play("jump");
+			self->start(2.0f);
+			mover->speed.y = -90;
+
+			auto player = self->world()->first<Player>();
+			if (player)
+			{
+				auto dir = Calc::sign(player->entity()->position.x - self->entity()->position.x);
+				if (dir == 0) dir = 1;
+
+				self->get<Animator>()->scale = Vec2(dir, 1);
+				mover->speed.x = dir * 40;
+			}
+		}
+	}));
+
+	auto hurtable = en->add(Hurtable());
+	hurtable->hurt_by = Mask::player_attack;
+	hurtable->collider = hitbox;
+	hurtable->on_hurt = [health = 3](Hurtable* self) mutable
+	{
+		auto player = self->world()->first<Player>();
+		if (player)
+		{
+			auto mover = self->get<Mover>();
+			auto sign = Calc::sign(self->entity()->position.x - player->entity()->position.x);
+			mover->speed.x = sign * 120;
+		}
+
+		health--;
+		if (health <= 0)
+		{
+			pop(self->world(), self->entity()->position + Point(0, -4));
+			self->entity()->destroy();
+		}
+	};
 
 	return en;
 }

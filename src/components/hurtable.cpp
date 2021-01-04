@@ -9,6 +9,7 @@ void Hurtable::update()
 	{
 		if (collider->check(hurt_by))
 		{
+			Time::pause_for(0.1f);
 			stun_timer = 0.5f;
 			flicker_timer = 0.5f;
 			on_hurt(this);

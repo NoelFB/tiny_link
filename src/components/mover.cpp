@@ -87,6 +87,10 @@ bool Mover::on_ground(int dist) const
 
 void Mover::update()
 {
+	// apply friction maybe
+	if (friction > 0 && on_ground())
+		speed.x = Calc::approach(speed.x, 0, friction * Time::delta);
+
 	// apply gravity
 	if (gravity != 0 && (!collider || !collider->check(Mask::solid, Point(0, 1))))
 		speed.y += gravity * Time::delta;

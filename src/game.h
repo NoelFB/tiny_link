@@ -22,7 +22,7 @@ namespace TL
 		Point room;
 		Vec2 camera;
 
-		void load_room(Point cell);
+		void load_room(Point cell, bool is_reload = false);
 		void startup();
 		void shutdown();
 		void update();

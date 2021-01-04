@@ -17,8 +17,13 @@ add_executable(game
 	src/game.cpp
 	src/content.h
 	src/content.cpp
+	src/masks.h
+	src/factory.h
+	src/factory.cpp
 	src/assets/sprite.h
 	src/assets/sprite.cpp
+	src/assets/tileset.h
+	src/assets/tileset.cpp
 	src/components/animator.h
 	src/components/animator.cpp 
 	src/components/collider.h
@@ -27,10 +32,14 @@ add_executable(game
 	src/components/player.cpp
 	src/components/mover.h
 	src/components/mover.cpp
-	src/masks.h
-	src/factory.h
-	src/factory.cpp
- "src/assets/tileset.h" "src/assets/tileset.cpp" "src/components/tilemap.h" "src/components/tilemap.cpp" "src/components/hurtable.h" "src/components/hurtable.cpp" "src/components/timer.h" "src/components/timer.cpp")
+	src/components/tilemap.h
+	src/components/tilemap.cpp
+	src/components/hurtable.h
+	src/components/hurtable.cpp
+	src/components/timer.h
+	src/components/timer.cpp
+	src/components/enemy.h
+)
 
 # Reference blah
 target_link_libraries(game blah)
