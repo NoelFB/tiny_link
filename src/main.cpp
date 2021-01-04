@@ -32,7 +32,7 @@ namespace
 int main()
 {
 	Config config;
-	config.name = "Tiny Link";
+	config.name = "Sword II: Adventure of Frog";
 	config.width = 1280;
 	config.height = 720;
 
