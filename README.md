@@ -1,5 +1,6 @@
 ## SWORD II: ADVENTURE OF FROG
-a small game made entirely on live stream over about 15 hours.
+A small game made entirely on live stream over about 15 hours.
+I intend to add more documentation and clarify some of the code and assets over the next few days.
 
 ### links
  - [windows build](https://github.com/NoelFB/tiny_link/releases/tag/v1.0.0)
