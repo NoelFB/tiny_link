@@ -3,6 +3,7 @@
 
 namespace TL
 {
+	class Game;
 	class World;
 	class Entity;
 
@@ -109,6 +110,8 @@ namespace TL
 	{
 	public:
 		static constexpr int max_component_types = 256;
+
+		Game* game;
 
 		World() = default;
 		World(const World&) = delete;

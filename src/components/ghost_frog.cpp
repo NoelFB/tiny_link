@@ -6,6 +6,7 @@
 #include "orb.h"
 #include "../masks.h"
 #include "../factory.h"
+#include "../game.h"
 
 using namespace TL;
 
@@ -183,8 +184,13 @@ void GhostFrog::update()
 			{
 				if (Vec2(orb->entity()->position - orb->target()).length() < 16)
 				{
+					auto sign = Calc::sign(orb->entity()->position.x - x);
+					if (sign != 0)
+						m_facing = sign;
+
 					anim->play("reflect");
 					orb->on_hit();
+
 					m_reflect_count++;
 					m_timer = 0;
 				}
@@ -195,7 +201,7 @@ void GhostFrog::update()
 				{
 					Factory::pop(world(), entity()->position + Point(0, -8));
 					orb->entity()->destroy();
-					on_hurt(nullptr);
+					get<Hurtable>()->hurt();
 					m_timer = 0;
 				}
 			}
@@ -205,6 +211,7 @@ void GhostFrog::update()
 	else if (m_state == st_dead_state)
 	{
 		anim->play("dead");
+		world()->game->shake(1.0f);
 
 		if (Time::on_interval(0.25f))
 		{
@@ -219,6 +226,7 @@ void GhostFrog::update()
 					Factory::pop(world(), entity()->position + Point(x * 12, -8 + y * 12));
 
 			Time::pause_for(0.3f);
+			world()->game->shake(0.1f);
 			entity()->destroy();
 		}
 	}

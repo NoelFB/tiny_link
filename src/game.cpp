@@ -18,6 +18,8 @@ namespace
 
 void Game::startup()
 {
+	world.game = this;
+
 	// load our content
 	Content::load();
 
@@ -29,7 +31,7 @@ void Game::startup()
 	m_draw_colliders = false;
 
 	// load first room
-	load_room(Point(12, 0));
+	load_room(Point(0, 0));
 	camera = Vec2(room.x * width, room.y * height);
 }
 
@@ -154,6 +156,7 @@ void Game::shutdown()
 
 void Game::update()
 {
+
 	// Toggle Collider Render
 	if (Input::pressed(Key::F1))
 		m_draw_colliders = !m_draw_colliders;
@@ -169,8 +172,23 @@ void Game::update()
 	// Normal Update
 	if (!m_transition)
 	{
+		// Screen Shake
+		m_shake_timer -= Time::delta;
+		if (m_shake_timer > 0)
+		{
+			if (Time::on_interval(0.05f))
+			{
+				m_shake.x = Calc::rand_int(0, 2) == 0 ? -1 : 1;
+				m_shake.y = Calc::rand_int(0, 2) == 0 ? -1 : 1;
+			}
+		}
+		else
+			m_shake = Point::zero;
+
+		// Upodate Objects
 		world.update();
 
+		// Check for transition / death
 		auto player = world.first<Player>();
 		if (player)
 		{
@@ -281,7 +299,7 @@ void Game::render()
 		buffer->clear(0x150e22);
 
 		// push camera offset
-		batch.push_matrix(Mat3x2::create_translation(-camera));
+		batch.push_matrix(Mat3x2::create_translation(-camera + m_shake));
 
 		// draw gameplay objects
 		world.render(batch);
@@ -363,4 +381,9 @@ void Game::render()
 		batch.render(App::backbuffer);
 		batch.clear();
 	}
+}
+
+void Game::shake(float time)
+{
+	m_shake_timer = time;
 }

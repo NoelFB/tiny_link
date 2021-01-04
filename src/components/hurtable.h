@@ -17,6 +17,7 @@ namespace TL
 		uint32_t hurt_by = 0;
 		std::function<void(Hurtable* self)> on_hurt;
 
+		void hurt();
 		void update() override;
 	};
 }

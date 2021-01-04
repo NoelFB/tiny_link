@@ -31,6 +31,7 @@ namespace TL
 		void shutdown();
 		void update();
 		void render();
+		void shake(float time);
 
 	private:
 		bool m_draw_colliders;
@@ -39,5 +40,7 @@ namespace TL
 		Point m_next_room;
 		Point m_last_room;
 		Vector<Entity*> m_last_entities;
+		Point m_shake;
+		float m_shake_timer = 0;
 	};
 }
