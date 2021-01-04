@@ -7,7 +7,7 @@ a small game made entirely on live stream over about 15 hours.
  
 ### building
   - You need C++17 and CMake
-  - Make sure you have SDL2 headers & DLLs, and make sure CMake can find them
+  - Make sure you have SDL2 headers & libraries, and make sure CMake can find them
 
 ![Screenshot](https://github.com/noelfb/tiny_link/raw/main/screenshot.png "Screenshot")
 
