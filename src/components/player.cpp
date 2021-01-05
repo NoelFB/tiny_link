@@ -244,6 +244,10 @@ void Player::update()
 
 			// hack:
 			// destroy orb
+			// ideally we would have an "attack" component that the orb could
+			// subscribe to, and delete itself when it hits the player. since
+			// the orb currently has no way to know if it hit the player, we
+			// have to add this ugly hack!
 			if (hit->get<Orb>())
 				hit->entity()->destroy();
 		}
