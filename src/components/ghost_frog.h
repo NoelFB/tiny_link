@@ -21,9 +21,18 @@ namespace TL
 		static constexpr int st_reflect = 5;
 		static constexpr int st_dead_state = 6;
 
+		// health during our first phase
 		static constexpr int max_health_1 = 10;
+
+		// health during our second phase
 		static constexpr int max_health_2 = 3;
+
+		// current health value (assigned to phase 1 health to start)
 		int health = max_health_1;
+
+		// phase 0 or 1
+		//		0 = running along the ground and slicing
+		//		1 = flying around in the air shooting orbs
 		int phase = 0;
 
 		GhostFrog();

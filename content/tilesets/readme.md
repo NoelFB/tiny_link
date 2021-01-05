@@ -1,0 +1,1 @@
+The tilesets are stored in the [Aseprite](https://www.aseprite.org/) format, and you'll need Aseprite to edit them.
