@@ -1,7 +1,6 @@
 #pragma once
 #include "../world.h"
 #include <blah.h>
-#include <memory>
 
 using namespace Blah;
 
@@ -23,7 +22,7 @@ namespace TL
 		void render(Batch& batch) override;
 
 	private:
-		std::shared_ptr<Subtexture[]> m_grid;
+		Vector<Subtexture> m_grid;
 		int m_tile_width = 0;
 		int m_tile_height = 0;
 		int m_columns = 0;
