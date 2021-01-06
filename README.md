@@ -8,6 +8,7 @@ I intend to add more documentation and clarify some of the code and assets over 
  
 ### building
   - You need C++17 and CMake 3.12+
+  - Pull Submodule (`git submodule init`, `git submodule update`) (this repo references the [blah](https://github.com/NoelFB/blah) repo)
   - Make sure you have SDL2 headers & libraries, and make sure CMake can find them
   - All the art was made in [Aseprite](https://www.aseprite.org/). To modify or add new sprites, you'll need to use aseprite.
 
