@@ -39,13 +39,17 @@ add_executable(game
 	src/components/timer.h
 	src/components/timer.cpp
 	src/components/enemy.h
- "src/components/ghost_frog.h" "src/components/ghost_frog.cpp" "src/components/orb.h" "src/components/orb.cpp")
+	src/components/ghost_frog.h
+	src/components/ghost_frog.cpp
+	src/components/orb.h
+	src/components/orb.cpp
+ )
 
 # Reference blah
 target_link_libraries(game blah)
 
 if( ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-    set_target_properties(game PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 --preload-file ${CMAKE_SOURCE_DIR}/content@/content")
+   	set_target_properties(game PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 --preload-file ${CMAKE_SOURCE_DIR}/content@/content")
 	set(CMAKE_EXECUTABLE_SUFFIX ".html")
 endif()
 
