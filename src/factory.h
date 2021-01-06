@@ -6,6 +6,8 @@ using namespace Blah;
 
 namespace TL
 {
+	// Factory to create game objects
+
 	namespace Factory
 	{
 		Entity* player(World* world, Point position);

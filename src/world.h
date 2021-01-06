@@ -111,6 +111,11 @@ namespace TL
 	public:
 		static constexpr int max_component_types = 256;
 
+		// NOTE:
+		// I tossed this reference here at the very end of making the game,
+		// just so that the boss could tell the game to shake the screen.
+		// Ideally I think there should be a Camera component that handles
+		// that instead.
 		Game* game;
 
 		World() = default;

@@ -23,8 +23,7 @@ Collider Collider::make_grid(int tile_size, int columns, int rows)
 	collider.m_grid.tile_size = tile_size;
 	collider.m_grid.columns = columns;
 	collider.m_grid.rows = rows;
-	collider.m_grid.cells.resize(columns * rows);
-
+	collider.m_grid.cells.expand(columns * rows);
 	return collider;
 }
 

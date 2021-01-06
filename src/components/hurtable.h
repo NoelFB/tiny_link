@@ -8,6 +8,9 @@ using namespace Blah;
 
 namespace TL
 {
+	// Automatically checks if the provided collider ever overlaps
+	// with something in the `hurt_by` mask. Makes it easy for enemies
+	// to check if they were hit by `Mask::player_attack`
 	class Hurtable : public Component
 	{
 	public:

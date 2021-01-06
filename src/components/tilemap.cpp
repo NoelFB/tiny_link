@@ -12,7 +12,7 @@ Tilemap::Tilemap(int tile_width, int tile_height, int columns, int rows)
 	m_tile_height = tile_height;
 	m_columns = columns;
 	m_rows = rows;
-	m_grid.resize(columns * rows);
+	m_grid.expand(columns * rows);
 }
 
 int Tilemap::tile_width() const

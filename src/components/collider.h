@@ -1,7 +1,5 @@
 #pragma once
 #include <blah.h>
-#include <memory>
-#include <vector>
 #include "../world.h"
 
 using namespace Blah;
@@ -45,7 +43,7 @@ namespace TL
 			int columns;
 			int rows;
 			int tile_size;
-			std::vector<bool> cells;
+			Vector<bool> cells;
 		};
 
 		Shape m_shape = Shape::None;
