@@ -28,6 +28,7 @@ bool Mover::move_x(int amount)
 	{
 		entity()->position.x += amount;
 	}
+	return false;
 }
 
 bool Mover::move_y(int amount)
@@ -64,6 +65,7 @@ bool Mover::move_y(int amount)
 	{
 		entity()->position.y += amount;
 	}
+	return false;
 }
 
 void Mover::stop_x()
