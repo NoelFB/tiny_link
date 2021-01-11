@@ -19,5 +19,5 @@ I intend to add more documentation and clarify some of the code and assets over 
 
 *Box Art by [Grayson](https://twitter.com/soft_rumpus/status/1345934041527144459/photo/1)*
 
-*Mosquito enemy sprite by [Randy](https://twitter.com/RandyPGaul))*
+*Mosquito enemy sprite by [Randy](https://twitter.com/RandyPGaul)*
 
