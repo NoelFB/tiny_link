@@ -233,7 +233,7 @@ void GhostFrog::update()
 
 	if (m_state == st_floating || m_state == st_shoot || m_state == st_reflect)
 	{
-		anim->offset.y = Calc::sin(Time::elapsed * 2) * 3;
+		anim->offset.y = Calc::sin(Time::seconds * 2) * 3;
 	}
 
 	m_last_pos = entity()->position;
