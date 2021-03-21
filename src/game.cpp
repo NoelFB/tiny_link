@@ -241,8 +241,8 @@ void Game::update()
 				else
 				{
 					player->entity()->position = Point(
-						Calc::clamp_int(pos.x, bounds.x, bounds.x + bounds.w),
-						Calc::clamp_int(pos.y, bounds.y, bounds.y + bounds.h + 100));
+						Calc::clamp(pos.x, bounds.x, bounds.x + bounds.w),
+						Calc::clamp(pos.y, bounds.y, bounds.y + bounds.h + 100));
 
 					// reload if they fell out the bottom
 					if (player->entity()->position.y > bounds.y + bounds.h + 64)

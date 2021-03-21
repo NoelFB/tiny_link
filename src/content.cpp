@@ -45,7 +45,7 @@ FilePath Content::path()
 		if (!Directory::exists(root))
 			BLAH_ERROR("Unable to find content directory!");
 
-		Log::print("Content Path: %s", root.cstr());
+		Log::info("Content Path: %s", root.cstr());
 	}
 
 	return root;

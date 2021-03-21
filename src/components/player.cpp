@@ -24,20 +24,15 @@ namespace
 
 Player::Player()
 {
-	input_move = VirtualStick()
-		.add_keys(Key::Left, Key::Right, Key::Up, Key::Down)
-		.add_buttons(0, Button::Left, Button::Right, Button::Up, Button::Down)
-		.add_axes(0, Axis::LeftX, Axis::LeftY, 0.2f);
+	input_move.add_dpad(0);
+	input_move.add_left_stick(0, 0.2f);
+	input_move.add(Key::Left, Key::Right, Key::Up, Key::Down);
 
-	input_jump = VirtualButton()
-		.press_buffer(0.15f)
-		.add_key(Key::X)
-		.add_button(0, Button::A);
+	input_jump.press_buffer = 0.15f;
+	input_jump.add(Key::X, Button::A);
 
-	input_attack = VirtualButton()
-		.press_buffer(0.15f)
-		.add_key(Key::C)
-		.add_button(0, Button::X);
+	input_attack.press_buffer = 0.15f;
+	input_attack.add(Key::C, Button::X);
 }
 
 void Player::update()
@@ -51,7 +46,7 @@ void Player::update()
 	auto hitbox = get<Collider>();
 	auto was_on_ground = m_on_ground;
 	m_on_ground = mover->on_ground();
-	int input = input_move.value_i().x;
+	int input = input_move.sign().x;
 
 	// Sprite Stuff
 	{
@@ -121,7 +116,7 @@ void Player::update()
 		{
 			if (input_jump.pressed() && mover->on_ground())
 			{
-				input_jump.clear_press_buffer();
+				input_jump.consume_press();
 				anim->scale = Vec2(m_facing * 0.65f, 1.4f);
 				mover->speed.x = input * max_air_speed;
 				m_jump_timer = jump_time;
@@ -131,7 +126,7 @@ void Player::update()
 		// Begin Attack
 		if (input_attack.pressed())
 		{
-			input_attack.clear_press_buffer();
+			input_attack.consume_press();
 
 			m_state = st_attack;
 			m_attack_timer = 0;

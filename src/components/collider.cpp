@@ -181,10 +181,10 @@ bool TL::Collider::rect_to_grid(const Collider* a, const Collider* b, Point offs
 	RectI rect = a->m_rect + a->entity()->position + offset - b->entity()->position;
 
 	// get the cells the rectangle overlaps
-	int left = Calc::clamp_int(Calc::floor(rect.x / (float)b->m_grid.tile_size), 0, b->m_grid.columns);
-	int right = Calc::clamp_int(Calc::ceiling(rect.right() / (float)b->m_grid.tile_size), 0, b->m_grid.columns);
-	int top = Calc::clamp_int(Calc::floor(rect.y / (float)b->m_grid.tile_size), 0, b->m_grid.rows);
-	int bottom = Calc::clamp_int(Calc::ceiling(rect.bottom() / (float)b->m_grid.tile_size), 0, b->m_grid.rows);
+	int left = Calc::clamp((int)Calc::floor(rect.x / (float)b->m_grid.tile_size), 0, b->m_grid.columns);
+	int right = Calc::clamp((int)Calc::ceiling(rect.right() / (float)b->m_grid.tile_size), 0, b->m_grid.columns);
+	int top = Calc::clamp((int)Calc::floor(rect.y / (float)b->m_grid.tile_size), 0, b->m_grid.rows);
+	int bottom = Calc::clamp((int)Calc::ceiling(rect.bottom() / (float)b->m_grid.tile_size), 0, b->m_grid.rows);
 
 	// check each cell
 	for (int x = left; x < right; x++)
