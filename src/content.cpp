@@ -57,7 +57,7 @@ void Content::load()
 	packer.padding = 0;
 
 	// load the main font
-	font = SpriteFont(path() + "fonts/dogica.ttf", 8, SpriteFont::ASCII);
+	font = SpriteFont(path() + "fonts/dogica.ttf", 8, SpriteFont::CharRange::ASCII);
 	font.line_gap = 4;
 
 	// load sprites
@@ -118,8 +118,8 @@ void Content::load()
 		packer.pack();
 		sprite_atlas = Texture::create(packer.pages[0]);
 
-		subtextures.expand(packer.entries.size());
-		for (auto& entry : packer.entries)
+		subtextures.expand(packer.entries().size());
+		for (auto& entry : packer.entries())
 			subtextures[entry.id] = Subtexture(sprite_atlas, entry.packed, entry.frame);
 	}
 
