@@ -18,9 +18,9 @@ namespace TL
 
 		int health = max_health;
 
-		StickBinding input_move;
-		Binding input_jump;
-		Binding input_attack;
+		StickBindingRef input_move;
+		ButtonBindingRef input_jump;
+		ButtonBindingRef input_attack;
 
 		Player();
 		void update() override;

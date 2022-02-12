@@ -20,7 +20,7 @@ Entity* Factory::player(World* world, Point position)
 	anim->play("idle");
 	anim->depth = -10;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-4, -12, 8, 12)));
+	auto hitbox = en->add(Collider::make_rect(Recti(-4, -12, 8, 12)));
 	hitbox->mask = Mask::player;
 
 	auto mover = en->add(Mover());
@@ -38,7 +38,7 @@ Entity* Factory::bramble(World* world, Point position)
 	anim->play("idle");
 	anim->depth = -5;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-4, -8, 8, 8)));
+	auto hitbox = en->add(Collider::make_rect(Recti(-4, -8, 8, 8)));
 	hitbox->mask = Mask::enemy;
 
 	auto hurtable = en->add(Hurtable());
@@ -78,7 +78,7 @@ Entity* Factory::spitter(World* world, Point position)
 	anim->play("idle");
 	anim->depth = -5;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-6, -12, 12, 12)));
+	auto hitbox = en->add(Collider::make_rect(Recti(-6, -12, 12, 12)));
 	hitbox->mask = Mask::enemy;
 
 	auto hurtable = en->add(Hurtable());
@@ -110,12 +110,12 @@ Entity* Factory::bullet(World* world, Point position, int direction)
 	anim->play("idle");
 	anim->depth = -5;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-4, -4, 8, 8)));
+	auto hitbox = en->add(Collider::make_rect(Recti(-4, -4, 8, 8)));
 	hitbox->mask = Mask::enemy;
 
 	auto mover = en->add(Mover());
 	mover->collider = hitbox;
-	mover->speed = Vec2(direction * 40, 0);
+	mover->speed = Vec2f(direction * 40, 0);
 	mover->gravity = 130;
 	mover->on_hit_x = [](Mover* self) { self->entity()->destroy(); };
 	mover->on_hit_y = [](Mover* self) { self->speed.y = -60; };
@@ -203,7 +203,7 @@ Entity* Factory::mosquito(World* world, Point position)
 	anim->play("fly");
 	anim->depth = -5;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-4, -4, 8, 8)));
+	auto hitbox = en->add(Collider::make_rect(Recti(-4, -4, 8, 8)));
 	hitbox->mask = Mask::enemy;
 
 	auto mover = en->add(Mover());
@@ -225,7 +225,7 @@ namespace
 		anim->play("idle");
 		anim->depth = -1;
 
-		auto hitbox = en->add(Collider::make_rect(RectI(-6, -16, 12, 16)));
+		auto hitbox = en->add(Collider::make_rect(Recti(-6, -16, 12, 16)));
 		hitbox->mask = Mask::solid;
 	}
 }
@@ -275,7 +275,7 @@ Entity* Factory::blob(World* world, Point position)
 	anim->play("idle");
 	anim->depth = -5;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-4, -8, 8, 8)));
+	auto hitbox = en->add(Collider::make_rect(Recti(-4, -8, 8, 8)));
 	hitbox->mask = Mask::enemy;
 
 	auto mover = en->add(Mover());
@@ -307,7 +307,7 @@ Entity* Factory::blob(World* world, Point position)
 				auto dir = Calc::sign(player->entity()->position.x - self->entity()->position.x);
 				if (dir == 0) dir = 1;
 
-				self->get<Animator>()->scale = Vec2(dir, 1);
+				self->get<Animator>()->scale = Vec2f(dir, 1);
 				mover->speed.x = dir * 40;
 			}
 		}
@@ -347,7 +347,7 @@ Entity* Factory::ghost_frog(World* world, Point position)
 	anim->play("sword");
 	anim->depth = -5;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-4, -12, 8, 12)));
+	auto hitbox = en->add(Collider::make_rect(Recti(-4, -12, 8, 12)));
 	hitbox->mask = Mask::enemy;
 
 	auto mover = en->add(Mover());
@@ -374,7 +374,7 @@ Entity* Factory::orb(World* world, Point position)
 	anim->play("idle");
 	anim->depth = -5;
 
-	auto hitbox = en->add(Collider::make_rect(RectI(-4, -4, 8, 8)));
+	auto hitbox = en->add(Collider::make_rect(Recti(-4, -4, 8, 8)));
 	hitbox->mask = Mask::enemy;
 
 	auto mover = en->add(Mover());
@@ -384,7 +384,7 @@ Entity* Factory::orb(World* world, Point position)
 
 	auto hurtable = en->add(Hurtable());
 	hurtable->hurt_by = Mask::player_attack;
-	hurtable->collider = en->add(Collider::make_rect(RectI(-8, -8, 16, 16)));
+	hurtable->collider = en->add(Collider::make_rect(Recti(-8, -8, 16, 16)));
 	hurtable->on_hurt = [](Hurtable* self) { self->get<Orb>()->on_hit(); };
 
 	return en;

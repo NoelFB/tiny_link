@@ -8,6 +8,7 @@
 #include "components/mover.h"
 #include "assets/sprite.h"
 #include "factory.h"
+#include <cstdlib>
 
 using namespace TL;
 
@@ -24,7 +25,7 @@ void Game::startup()
 	Content::load();
 
 	// framebuffer for the game
-	buffer = FrameBuffer::create(width, height);
+	buffer = Target::create(width, height);
 
 	// set batcher to use Nearest Filter
 	batch.default_sampler = TextureSampler(TextureFilter::Nearest);
@@ -32,7 +33,7 @@ void Game::startup()
 
 	// load first room
 	load_room(Point(0, 0));
-	camera = Vec2(room.x * width, room.y * height);
+	camera = Vec2f(room.x * width, room.y * height);
 	fullscreen = false;
 }
 
@@ -102,7 +103,7 @@ void Game::load_room(Point cell, bool is_reload)
 			{
 				tilemap->set_cell(x, y, &jumpthrus->random_tile());
 				auto jumpthru_en = world.add_entity(offset + Point(x * tile_width, y * tile_height));
-				auto jumpthru_col = jumpthru_en->add(Collider::make_rect(RectI(0, 0, 8, 4)));
+				auto jumpthru_col = jumpthru_en->add(Collider::make_rect(Recti(0, 0, 8, 4)));
 				jumpthru_col->mask = Mask::jumpthru;
 				break;
 			}
@@ -176,6 +177,7 @@ void Game::update()
 		m_transition = false;
 		world.clear();
 		load_room(Point(0, 0));
+		camera = Vec2f(0, 0);
 	}
 
 	// Toggle Fullscreen
@@ -191,8 +193,8 @@ void Game::update()
 		{
 			if (Time::on_interval(0.05f))
 			{
-				m_shake.x = Calc::rand_int(0, 2) == 0 ? -1 : 1;
-				m_shake.y = Calc::rand_int(0, 2) == 0 ? -1 : 1;
+				m_shake.x = rand_int(0, 2) == 0 ? -1 : 1;
+				m_shake.y = rand_int(0, 2) == 0 ? -1 : 1;
 			}
 		}
 		else
@@ -206,7 +208,7 @@ void Game::update()
 		if (player)
 		{
 			auto pos = player->entity()->position;
-			auto bounds = RectI(room.x * width, room.y * height, width, height);
+			auto bounds = Recti(room.x * width, room.y * height, width, height);
 			if (!bounds.contains(pos))
 			{
 				// target room
@@ -275,8 +277,8 @@ void Game::update()
 		m_next_ease = Calc::approach(m_next_ease, 1.0f, Time::delta / transition_duration);
 
 		// get last & next camera position
-		auto last_cam = Vec2(m_last_room.x * width, m_last_room.y * height);
-		auto next_cam = Vec2(m_next_room.x * width, m_next_room.y * height);
+		auto last_cam = Vec2f(m_last_room.x * width, m_last_room.y * height);
+		auto next_cam = Vec2f(m_next_room.x * width, m_next_room.y * height);
 
 		// LERP camera position
 		camera = last_cam + (next_cam - last_cam) * Ease::cube_in_out(m_next_ease);
@@ -289,7 +291,7 @@ void Game::update()
 			{
 				auto player = world.first<Player>();
 				if (player)
-					player->get<Mover>()->speed = Vec2(0, -150);
+					player->get<Mover>()->speed = Vec2f(0, -150);
 			}
 
 			// delete old objects (except player!)
@@ -312,7 +314,7 @@ void Game::render()
 		buffer->clear(0x150e22);
 
 		// push camera offset
-		batch.push_matrix(Mat3x2::create_translation(-camera + m_shake));
+		batch.push_matrix(Mat3x2f::create_translation(-camera + m_shake));
 
 		// draw gameplay objects
 		world.render(batch);
@@ -381,17 +383,17 @@ void Game::render()
 	// draw buffer to the screen
 	{
 		float scale = Calc::min(
-			App::backbuffer->width() / (float)buffer->width(),
-			App::backbuffer->height() / (float)buffer->height());
+			App::backbuffer()->width() / (float)buffer->width(),
+			App::backbuffer()->height() / (float)buffer->height());
 
-		Vec2 screen_center = Vec2(App::backbuffer->width(), App::backbuffer->height()) / 2;
-		Vec2 buffer_center = Vec2(buffer->width(), buffer->height()) / 2;
+		Vec2f screen_center = Vec2f(App::backbuffer()->width(), App::backbuffer()->height()) / 2;
+		Vec2f buffer_center = Vec2f(buffer->width(), buffer->height()) / 2;
 
-		App::backbuffer->clear(Color::black);
-		batch.push_matrix(Mat3x2::create_transform(screen_center, buffer_center, Vec2::one * scale, 0));
-		batch.tex(buffer->attachment(0), Vec2::zero, Color::white);
+		App::backbuffer()->clear(Color::black);
+		batch.push_matrix(Mat3x2f::create_transform(screen_center, buffer_center, Vec2f::one * scale, 0));
+		batch.tex(buffer->texture(0), Vec2f::zero, Color::white);
 		batch.pop_matrix();
-		batch.render(App::backbuffer);
+		batch.render(App::backbuffer());
 		batch.clear();
 	}
 }
@@ -399,4 +401,9 @@ void Game::render()
 void Game::shake(float time)
 {
 	m_shake_timer = time;
+}
+
+int Game::rand_int(int min, int max)
+{
+	return min + (rand() % (max - min));
 }

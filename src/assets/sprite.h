@@ -28,7 +28,7 @@ namespace TL
 		};
 
 		String name;
-		Vec2 origin;
+		Vec2f origin;
 		Vector<Animation> animations;
 
 		const Animation* get_animation(const String& name) const;

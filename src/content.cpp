@@ -43,7 +43,10 @@ FilePath Content::path()
 		} while (!Directory::exists(root) && up.length() < 30);
 
 		if (!Directory::exists(root))
-			BLAH_ERROR("Unable to find content directory!");
+		{
+			Log::error("Unable to find content directory!");
+			return "";
+		}
 
 		Log::info("Content Path: %s", root.cstr());
 	}
@@ -105,7 +108,7 @@ void Content::load()
 			for (int x = 0; x < columns; x++)
 				for (int y = 0; y < rows; y++)
 				{
-					auto subrect = RectI(x * Game::tile_width, y * Game::tile_height, Game::tile_width, Game::tile_height);
+					auto subrect = Recti(x * Game::tile_width, y * Game::tile_height, Game::tile_width, Game::tile_height);
 					auto subimage = frame.image.get_sub_image(subrect);
 					packer.add(pack_index, subimage);
 					pack_index++;
@@ -128,11 +131,11 @@ void Content::load()
 	{
 		Sprite sprite;
 		sprite.name = info.name;
-		sprite.origin = Vec2::zero;
+		sprite.origin = Vec2f::zero;
 
 		if (info.aseprite.slices.size() > 0 && info.aseprite.slices[0].has_pivot)
 		{
-			sprite.origin = Vec2(
+			sprite.origin = Vec2f(
 				info.aseprite.slices[0].pivot.x,
 				info.aseprite.slices[0].pivot.y);
 		}
@@ -199,7 +202,7 @@ void Content::load()
 
 void Content::unload()
 {
-	font.dispose();
+	font = SpriteFont();
 }
 
 TextureRef Content::atlas()

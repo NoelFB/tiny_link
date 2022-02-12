@@ -11,11 +11,11 @@ namespace TL
 	class Mover : public Component
 	{
 	private:
-		Vec2 m_remainder;
+		Vec2f m_remainder;
 
 	public:
 		Collider* collider = nullptr;
-		Vec2 speed;
+		Vec2f speed;
 		float gravity = 0;
 		float friction = 0;
 		std::function<void(Mover*)> on_hit_x;

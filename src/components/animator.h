@@ -16,7 +16,7 @@ namespace TL
 		float m_frame_counter = 0;
 
 	public:
-		Vec2 scale = Vec2::one;
+		Vec2f scale = Vec2f::one;
 		Point offset = Point::zero;
 
 		Animator() = default;

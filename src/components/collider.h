@@ -20,12 +20,12 @@ namespace TL
 
 		Collider();
 
-		static Collider make_rect(const RectI& rect);
+		static Collider make_rect(const Recti& rect);
 		static Collider make_grid(int tile_size, int columns, int rows);
 
 		Shape shape() const;
-		RectI get_rect() const;
-		void set_rect(const RectI& value);
+		Recti get_rect() const;
+		void set_rect(const Recti& value);
 		bool get_cell(int x, int y) const;
 		void set_cell(int x, int y, bool value);
 		void set_cells(int x, int y, int w, int h, bool value);
@@ -47,7 +47,7 @@ namespace TL
 		};
 
 		Shape m_shape = Shape::None;
-		RectI m_rect;
+		Recti m_rect;
 		Grid m_grid;
 
 		static bool rect_to_rect(const Collider* a, const Collider* b, Point offset);

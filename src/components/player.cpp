@@ -24,38 +24,37 @@ namespace
 
 Player::Player()
 {
-	input_move.add_dpad(0);
-	input_move.add_left_stick(0, 0.2f);
-	input_move.add(Key::Left, Key::Right, Key::Up, Key::Down);
+	input_move = Input::register_binding(StickBinding());
+	input_move->add_dpad(0);
+	input_move->add_left_stick(0, 0.2f);
+	input_move->add(Key::Left, Key::Right, Key::Up, Key::Down);
 
-	input_jump.press_buffer = 0.15f;
-	input_jump.add(Key::X, Button::A);
+	input_jump = Input::register_binding(ButtonBinding());
+	input_jump->press_buffer = 0.15f;
+	input_jump->add(Key::X, Button::A);
 
-	input_attack.press_buffer = 0.15f;
-	input_attack.add(Key::C, Button::X);
+	input_attack = Input::register_binding(ButtonBinding());
+	input_attack->press_buffer = 0.15f;
+	input_attack->add(Key::C, Button::X);
 }
 
 void Player::update()
 {
-	input_move.update();
-	input_jump.update();
-	input_attack.update();
-
 	auto mover = get<Mover>();
 	auto anim = get<Animator>();
 	auto hitbox = get<Collider>();
 	auto was_on_ground = m_on_ground;
 	m_on_ground = mover->on_ground();
-	int input = input_move.sign().x;
+	int input = input_move->sign().x;
 
 	// Sprite Stuff
 	{
 		// land squish
 		if (!was_on_ground && m_on_ground)
-			anim->scale = Vec2(m_facing * 1.5f, 0.7f);
+			anim->scale = Vec2f(m_facing * 1.5f, 0.7f);
 
 		// lerp scale back to one
-		anim->scale = Calc::approach(anim->scale, Vec2(m_facing, 1.0f), Time::delta * 4);
+		anim->scale = Vec2f::approach(anim->scale, Vec2f(m_facing, 1.0f), Time::delta * 4);
 
 		// set m_facing
 		anim->scale.x = Calc::abs(anim->scale.x) * m_facing;
@@ -114,25 +113,25 @@ void Player::update()
 
 		// Invoke Jumping
 		{
-			if (input_jump.pressed() && mover->on_ground())
+			if (input_jump->pressed() && mover->on_ground())
 			{
-				input_jump.consume_press();
-				anim->scale = Vec2(m_facing * 0.65f, 1.4f);
+				input_jump->consume_press();
+				anim->scale = Vec2f(m_facing * 0.65f, 1.4f);
 				mover->speed.x = input * max_air_speed;
 				m_jump_timer = jump_time;
 			}
 		}
 
 		// Begin Attack
-		if (input_attack.pressed())
+		if (input_attack->pressed())
 		{
-			input_attack.consume_press();
+			input_attack->consume_press();
 
 			m_state = st_attack;
 			m_attack_timer = 0;
 
 			if (!m_attack_collider)
-				m_attack_collider = entity()->add(Collider::make_rect(RectI()));
+				m_attack_collider = entity()->add(Collider::make_rect(Recti()));
 			m_attack_collider->mask = Mask::player_attack;
 
 			if (m_on_ground)
@@ -148,11 +147,11 @@ void Player::update()
 		// setup hitbox
 		if (m_attack_timer < 0.2f)
 		{
-			m_attack_collider->set_rect(RectI(-16, -12, 16, 8));
+			m_attack_collider->set_rect(Recti(-16, -12, 16, 8));
 		}
 		else if (m_attack_timer < 0.5f)
 		{
-			m_attack_collider->set_rect(RectI(8, -8, 16, 8));
+			m_attack_collider->set_rect(Recti(8, -8, 16, 8));
 		}
 		else if (m_attack_collider)
 		{
@@ -190,7 +189,7 @@ void Player::update()
 	{
 		mover->speed.y = -100;
 		m_jump_timer -= Time::delta;
-		if (!input_jump.down())
+		if (!input_jump->down())
 			m_jump_timer = 0;
 	}
 
@@ -209,7 +208,7 @@ void Player::update()
 	if (!m_on_ground)
 	{
 		float grav = gravity;
-		if (m_state == st_normal && Calc::abs(mover->speed.y) < 20 && input_jump.down())
+		if (m_state == st_normal && Calc::abs(mover->speed.y) < 20 && input_jump->down())
 			grav *= 0.4f;
 
 		mover->speed.y += grav * Time::delta;
@@ -230,7 +229,7 @@ void Player::update()
 				m_attack_collider = nullptr;
 			}
 
-			mover->speed = Vec2(-m_facing * 100, -80);
+			mover->speed = Vec2f(-m_facing * 100, -80);
 
 			health--;
 			m_hurt_timer = hurt_duration;

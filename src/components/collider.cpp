@@ -8,7 +8,7 @@ Collider::Collider()
 	active = false;
 }
 
-Collider Collider::make_rect(const RectI& rect)
+Collider Collider::make_rect(const Recti& rect)
 {
 	Collider collider;
 	collider.m_shape = Shape::Rect;
@@ -32,13 +32,13 @@ Collider::Shape Collider::shape() const
 	return m_shape;
 }
 
-RectI Collider::get_rect() const
+Recti Collider::get_rect() const
 {
 	BLAH_ASSERT(m_shape == Shape::Rect, "Collider is not a Rectangle");
 	return m_rect;
 }
 
-void Collider::set_rect(const RectI& value)
+void Collider::set_rect(const Recti& value)
 {
 	BLAH_ASSERT(m_shape == Shape::Rect, "Collider is not a Rectangle");
 	m_rect = value;
@@ -142,7 +142,7 @@ void Collider::render(Batch& batch)
 {
 	static const Color color = Color::red;
 
-	batch.push_matrix(Mat3x2::create_translation(entity()->position));
+	batch.push_matrix(Mat3x2f::create_translation(entity()->position));
 
 	if (m_shape == Shape::Rect)
 	{
@@ -169,8 +169,8 @@ void Collider::render(Batch& batch)
 
 bool TL::Collider::rect_to_rect(const Collider* a, const Collider* b, Point offset)
 {
-	RectI ar = a->m_rect + a->entity()->position + offset;
-	RectI br = b->m_rect + b->entity()->position;
+	Recti ar = a->m_rect + a->entity()->position + offset;
+	Recti br = b->m_rect + b->entity()->position;
 
 	return ar.overlaps(br);
 }
@@ -178,7 +178,7 @@ bool TL::Collider::rect_to_rect(const Collider* a, const Collider* b, Point offs
 bool TL::Collider::rect_to_grid(const Collider* a, const Collider* b, Point offset)
 {
 	// get a relative rectangle to the grid
-	RectI rect = a->m_rect + a->entity()->position + offset - b->entity()->position;
+	Recti rect = a->m_rect + a->entity()->position + offset - b->entity()->position;
 
 	// get the cells the rectangle overlaps
 	int left = Calc::clamp((int)Calc::floor(rect.x / (float)b->m_grid.tile_size), 0, b->m_grid.columns);

@@ -44,7 +44,7 @@ void GhostFrog::update()
 	}
 
 	// flip sprite
-	anim->scale = Vec2(m_facing, 1);
+	anim->scale = Vec2f(m_facing, 1);
 
 	// NORMAL STATE
 	if (m_state == st_readying_attack)
@@ -76,9 +76,9 @@ void GhostFrog::update()
 		if (Time::on_time(m_timer, 0.8f))
 		{
 			mover->speed.x = m_facing * 250;
-			hitbox->set_rect(RectI(-4 + m_facing * 4, -12, 8, 12));
+			hitbox->set_rect(Recti(-4 + m_facing * 4, -12, 8, 12));
 
-			RectI rect(8, -8, 20, 8);
+			Recti rect(8, -8, 20, 8);
 			if (m_facing < 0)
 				rect.x = -(rect.x + rect.w);
 
@@ -97,7 +97,7 @@ void GhostFrog::update()
 		// end attack state
 		else if (m_timer >= anim->animation()->duration())
 		{
-			hitbox->set_rect(RectI(-4, -12, 8, 12));
+			hitbox->set_rect(Recti(-4, -12, 8, 12));
 
 			if (health > 0)
 			{
@@ -107,7 +107,7 @@ void GhostFrog::update()
 			{
 				phase = 1;
 				health = max_health_2;
-				m_side = Calc::rand_int(0, 2) == 0 ? -1 : 1;
+				m_side = Game::rand_int(0, 2) == 0 ? -1 : 1;
 				set_state(st_floating);
 			}
 		}
@@ -142,7 +142,7 @@ void GhostFrog::update()
 	// SHOOTING STATE
 	else if (m_state == st_shoot)
 	{
-		mover->speed = Calc::approach(mover->speed, Vec2::zero, 300 * Time::delta);
+		mover->speed = Vec2f::approach(mover->speed, Vec2f::zero, 300 * Time::delta);
 
 		m_facing = Calc::sign(player_x - x);
 		if (m_facing == 0)
@@ -182,7 +182,7 @@ void GhostFrog::update()
 		{
 			if (m_reflect_count < 2)
 			{
-				if (Vec2(orb->entity()->position - orb->target()).length() < 16)
+				if (Vec2f(orb->entity()->position - orb->target()).length() < 16)
 				{
 					auto sign = Calc::sign(orb->entity()->position.x - x);
 					if (sign != 0)
@@ -197,7 +197,7 @@ void GhostFrog::update()
 			}
 			else
 			{
-				if (Vec2(orb->entity()->position - orb->target()).length() < 8)
+				if (Vec2f(orb->entity()->position - orb->target()).length() < 8)
 				{
 					Factory::pop(world(), entity()->position + Point(0, -8));
 					orb->entity()->destroy();
@@ -215,7 +215,7 @@ void GhostFrog::update()
 
 		if (Time::on_interval(0.25f))
 		{
-			auto offset = Point(Calc::rand_int(-16, 16), Calc::rand_int(-16, 16));
+			auto offset = Point(Game::rand_int(-16, 16), Game::rand_int(-16, 16));
 			Factory::pop(world(), entity()->position + Point(0, -8) + offset);
 		}
 

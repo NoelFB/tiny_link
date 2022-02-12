@@ -21,10 +21,10 @@ namespace TL
 		static inline const char* ending = "YOU SAVED POND\nAND YOU ARE\nA REAL HERO";
 
 		World world;
-		FrameBufferRef buffer;
+		TargetRef buffer;
 		Batch batch;
 		Point room;
-		Vec2 camera;
+		Vec2f camera;
 		bool fullscreen = false;
 
 		void load_room(Point cell, bool is_reload = false);
@@ -33,6 +33,8 @@ namespace TL
 		void update();
 		void render();
 		void shake(float time);
+
+		static int rand_int(int min, int max);
 
 	private:
 		bool m_draw_colliders;
