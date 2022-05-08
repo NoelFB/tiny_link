@@ -347,8 +347,8 @@ void Game::render()
 		{
 			auto w = Content::font.width_of(ending);
 			auto pos = Point(room.x * width + width / 2, room.y * height + 20);
-			batch.str(Content::font, ending, pos + Point(0, 1), TextAlign::Top, 8, Color::black);
-			batch.str(Content::font, ending, pos, TextAlign::Top, 8, Color::white);
+			batch.str(Content::font, ending, pos + Point(0, 1), Vec2f(0.0, 0.0), 8, Color::black);
+			batch.str(Content::font, ending, pos, Vec2f(0.0, 0.0), 8, Color::white);
 		}
 
 		// end camera offset

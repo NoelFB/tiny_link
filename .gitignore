@@ -2,3 +2,4 @@
 .vscode
 out
 CMakeSettings.json
+build/*
