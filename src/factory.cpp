@@ -9,6 +9,7 @@
 #include "components/enemy.h"
 #include "components/ghost_frog.h"
 #include "components/orb.h"
+#include "content.h"
 
 using namespace TL;
 
@@ -60,6 +61,7 @@ Entity* Factory::pop(World* world, Point position)
 	auto anim = en->add(Animator("pop"));
 	anim->play("pop");
 	anim->depth = -20;
+	Sound::play(Content::find_audio("explosion.wav"));
 
 	auto timer = en->add(Timer(anim->animation()->duration(), [](Timer* self)
 	{

@@ -21,5 +21,6 @@ namespace TL
 		static const Sprite* find_sprite(const char* name);
 		static const Tileset* find_tileset(const char* name);
 		static const Image* find_room(const Point& cell);
+		static const AudioRef find_audio(const char* name);
 	};
 }

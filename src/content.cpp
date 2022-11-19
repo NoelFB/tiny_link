@@ -26,6 +26,8 @@ namespace
 	Vector<Tileset> tilesets;
 	Vector<Subtexture> subtextures;
 	Vector<RoomInfo> rooms;
+	Vector<String> audio_names;
+	Vector<AudioRef> audios;
 	TextureRef sprite_atlas;
 }
 
@@ -198,6 +200,19 @@ void Content::load()
 
 		rooms.push_back(info);
 	}
+
+	// load audio
+	for (auto& it : Directory::enumerate(path() + "/sounds", false))
+	{
+		if (!(it.ends_with(".ogg") || it.ends_with(".wav")))
+			continue;
+
+		FilePath path = FilePath(it.cstr());
+		AudioRef audio = Audio::create(path);
+		BLAH_ASSERT(audio->get_backend_handle(), "Unable to load audio.");
+		audios.push_back(audio);
+		audio_names.push_back(Path::get_file_name(path));
+	}
 }
 
 void Content::unload()
@@ -233,6 +248,15 @@ const Image* Content::find_room(const Point& cell)
 	for (auto& it : rooms)
 		if (it.cell == cell)
 			return &it.image;
+
+	return nullptr;
+}
+
+const AudioRef Content::find_audio(const char* name)
+{
+	for (int i = 0; i < audio_names.size(); ++i)
+		if (audio_names[i] == name)
+			return audios[i];
 
 	return nullptr;
 }

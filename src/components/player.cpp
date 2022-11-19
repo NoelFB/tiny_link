@@ -4,6 +4,7 @@
 #include "collider.h"
 #include "orb.h"
 #include "../masks.h"
+#include "../content.h"
 
 using namespace TL;
 
@@ -119,6 +120,9 @@ void Player::update()
 				anim->scale = Vec2f(m_facing * 0.65f, 1.4f);
 				mover->speed.x = input * max_air_speed;
 				m_jump_timer = jump_time;
+				SoundParams params;
+				params.volume = 3.0f;
+				Sound::play(Content::find_audio("jump.wav"), params);
 			}
 		}
 
