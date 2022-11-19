@@ -1,5 +1,6 @@
 #include "hurtable.h"
 #include "animator.h"
+#include "../content.h"
 
 using namespace TL;
 
@@ -15,8 +16,10 @@ void Hurtable::update()
 {
 	if (collider && on_hurt && stun_timer <= 0)
 	{
-		if (collider->check(hurt_by))
+		if (collider->check(hurt_by)) {
+			Sound::play(Content::find_audio("hurt.wav"));
 			hurt();
+		}
 	}
 
 	stun_timer -= Time::delta;

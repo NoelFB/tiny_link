@@ -35,6 +35,8 @@ void Game::startup()
 	load_room(Point(0, 0));
 	camera = Vec2f(room.x * width, room.y * height);
 	fullscreen = false;
+
+	Music::play(Content::find_audio("melody2_forest.ogg"));
 }
 
 void Game::load_room(Point cell, bool is_reload)
@@ -179,10 +181,6 @@ void Game::update()
 		load_room(Point(0, 0));
 		camera = Vec2f(0, 0);
 	}
-
-	// Toggle Fullscreen
-	if (Input::pressed(Key::F4))
-		App::fullscreen(fullscreen = !fullscreen);
 
 	// Normal Update
 	if (!m_transition)
