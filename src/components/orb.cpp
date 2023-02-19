@@ -22,7 +22,7 @@ Point Orb::target() const
 void Orb::update()
 {
 	auto mover = get<Mover>();
-	auto diff = Vec2(target() - entity()->position).normal();
+	auto diff = Vec2f(target() - entity()->position).normal();
 	mover->speed = diff * speed;
 }
 
